@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import type { Meal } from '../types';
+import type { Meal, Goals } from '../types';
 import DailySummaryCard from '../components/DailySummaryCard';
 import MealList from '../components/MealList';
 import MealEntryForm from '../components/MealEntryForm';
+
+const sampleGoals: Goals = {
+  user_id: '1',
+  calories_goal: 2200,
+  protein_goal: 160,
+  carbs_goal: 200,
+  sugar_goal: 40,
+};
 
 const sampleMeals: Meal[] = [
   {
@@ -89,37 +97,21 @@ export default function DailyPage() {
 
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '1rem',
-          marginBottom: '1.5rem',
-        }}
-      >
-        <button onClick={goBack} style={{ fontSize: '1.2em' }}>
-          &larr;
-        </button>
-        <span style={{ fontSize: '1.1em', fontWeight: 600 }}>
-          {displayDate(currentDate)}
-        </span>
+      <div className="date-nav">
+        <button onClick={goBack}>&larr;</button>
+        <span>{displayDate(currentDate)}</span>
         <button
           onClick={goForward}
           disabled={isToday}
-          style={{
-            fontSize: '1.2em',
-            opacity: isToday ? 0.3 : 1,
-            cursor: isToday ? 'default' : 'pointer',
-          }}
+          style={{ opacity: isToday ? 0.3 : 1, cursor: isToday ? 'default' : 'pointer' }}
         >
           &rarr;
         </button>
       </div>
 
-      <DailySummaryCard totals={totals} />
-      <MealList meals={meals} />
+      <DailySummaryCard totals={totals} goals={sampleGoals} />
       <MealEntryForm />
+      <MealList meals={meals} />
     </div>
   );
 }

@@ -28,15 +28,7 @@ export default function AccountPage() {
     <div>
       <h2 style={{ marginBottom: '1rem' }}>Account</h2>
 
-      <section
-        style={{
-          padding: '1.25rem',
-          border: '1px solid #444',
-          borderRadius: '10px',
-          background: '#1e1e1e',
-          marginBottom: '1.5rem',
-        }}
-      >
+      <section className="card" style={{ marginBottom: '1.25rem' }}>
         <h3 style={{ marginTop: 0 }}>Create New User</h3>
         <form
           onSubmit={handleCreateUser}
@@ -47,28 +39,13 @@ export default function AccountPage() {
             placeholder="Name"
             value={newUserName}
             onChange={(e) => setNewUserName(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '0.5em 0.75em',
-              fontSize: '1em',
-              borderRadius: '6px',
-              border: '1px solid #555',
-              background: '#2a2a2a',
-              color: 'inherit',
-            }}
+            style={{ flex: 1 }}
           />
-          <button type="submit">Create</button>
+          <button type="submit" className="primary">Create</button>
         </form>
       </section>
 
-      <section
-        style={{
-          padding: '1.25rem',
-          border: '1px solid #444',
-          borderRadius: '10px',
-          background: '#1e1e1e',
-        }}
-      >
+      <section className="card">
         <h3 style={{ marginTop: 0 }}>Daily Goals</h3>
         <GoalForm goals={initialGoals} onSave={handleSaveGoals} />
       </section>

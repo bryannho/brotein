@@ -42,7 +42,7 @@ const sampleDays: DayEntry[] = [
 export default function WeeklyPage() {
   return (
     <div>
-      <h2 style={{ marginBottom: '1rem' }}>Weekly Overview</h2>
+      <h2 style={{ marginBottom: '1rem', fontWeight: 700 }}>Weekly Overview</h2>
       <WeeklyCharts days={sampleDays} />
     </div>
   );

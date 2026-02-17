@@ -1,54 +1,24 @@
-import type { MacroTotals } from '../types';
+import type { MacroTotals, Goals } from '../types';
+import CalorieRingChart from './CalorieRingChart';
 
 interface Props {
   totals: MacroTotals;
+  goals?: Goals;
 }
 
-const cardStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, 1fr)',
-  gap: '1rem',
-  padding: '1.25rem',
-  border: '1px solid #444',
-  borderRadius: '10px',
-  background: '#1e1e1e',
-  marginBottom: '1.5rem',
-};
-
-const cellStyle: React.CSSProperties = {
-  textAlign: 'center',
-};
-
-const labelStyle: React.CSSProperties = {
-  fontSize: '0.8em',
-  opacity: 0.7,
-  marginBottom: '0.25rem',
-};
-
-const valueStyle: React.CSSProperties = {
-  fontSize: '1.6em',
-  fontWeight: 700,
-};
-
-export default function DailySummaryCard({ totals }: Props) {
+export default function DailySummaryCard({ totals, goals }: Props) {
   return (
-    <div style={cardStyle}>
-      <div style={cellStyle}>
-        <div style={labelStyle}>Calories</div>
-        <div style={valueStyle}>{totals.calories}</div>
-      </div>
-      <div style={cellStyle}>
-        <div style={labelStyle}>Protein (g)</div>
-        <div style={valueStyle}>{totals.protein}</div>
-      </div>
-      <div style={cellStyle}>
-        <div style={labelStyle}>Carbs (g)</div>
-        <div style={valueStyle}>{totals.carbs}</div>
-      </div>
-      <div style={cellStyle}>
-        <div style={labelStyle}>Sugar (g)</div>
-        <div style={valueStyle}>{totals.sugar}</div>
-      </div>
+    <div className="card" style={{ marginBottom: '1.25rem' }}>
+      <CalorieRingChart
+        calories={totals.calories}
+        caloriesGoal={goals?.calories_goal ?? 0}
+        protein={totals.protein}
+        proteinGoal={goals?.protein_goal ?? 0}
+        carbs={totals.carbs}
+        carbsGoal={goals?.carbs_goal ?? 0}
+        sugar={totals.sugar}
+        sugarGoal={goals?.sugar_goal ?? 0}
+      />
     </div>
   );
 }

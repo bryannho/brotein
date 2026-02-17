@@ -16,27 +16,67 @@ frontend/
   src/
     main.tsx                         — Entry point, wraps App in BrowserRouter
     App.tsx                          — Routes: / -> /daily, /daily, /weekly, /account
-    App.css                          — Root container styles (max-width 960px)
-    index.css                        — Global styles (fonts, colors, buttons)
+    App.css                          — Layout, .card, .date-nav, .header nav, .meal-cards classes
+    index.css                        — Design tokens (CSS custom properties), base element styles
     types.ts                         — Shared TS interfaces (User, Meal, MacroTotals, DailyData, DayEntry, WeeklyData, Goals)
     components/
       Header.tsx                     — Nav bar: brand + NavLinks (Daily/Weekly/Account) + UserSelector
       UserSelector.tsx               — User dropdown (hardcoded placeholder users)
-      DailySummaryCard.tsx           — 4-column macro totals display
-      MealList.tsx                   — Table of meals with column headers
-      MealRowEditable.tsx            — Single meal row with inline-editable inputs + delete
-      MealEntryForm.tsx              — Text input + image file picker + submit
-      WeeklyCharts.tsx               — Two recharts BarCharts (calories + macros)
-      GoalForm.tsx                   — 4 number inputs for daily goals + save
+      CalorieRingChart.tsx           — Custom SVG radial chart (calorie ring + 3 macro rings)
+      DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
+      MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
+      MealEntryForm.tsx              — Text input + hidden file input with camera button + submit
+      WeeklyCharts.tsx               — Two recharts BarCharts (calories + macros) with custom tooltip
+      GoalForm.tsx                   — Goal number inputs (mapped from field config) + save
     pages/
-      DailyPage.tsx                  — Date nav + summary + meal list + entry form
+      DailyPage.tsx                  — Date nav > ring chart > meal form > meal cards
       WeeklyPage.tsx                 — Weekly overview with charts
       AccountPage.tsx                — Create user + goal setting
-  index.html
+  index.html                         — Google Fonts (Inter), theme-color meta
   vite.config.ts
   package.json
   tsconfig*.json
 ```
+
+## Design System
+
+### CSS Custom Properties (defined in `index.css`)
+
+| Token | Value | Purpose |
+|-------|-------|---------|
+| `--color-bg` | `#1a1a1a` | Page background |
+| `--color-surface` | `#242424` | Cards/surfaces |
+| `--color-surface-alt` | `#2c2c2c` | Inputs, hover states |
+| `--color-border` | `#333` | Borders |
+| `--color-text` | `#f0f0f0` | Primary text |
+| `--color-text-secondary` | `#888` | Labels, secondary text |
+| `--color-calories` | `#7c83ff` | Calories accent (blue-violet) |
+| `--color-protein` | `#4ecdc4` | Protein (teal) |
+| `--color-carbs` | `#ffd43b` | Carbs (warm yellow) |
+| `--color-sugar` | `#ff6b6b` | Sugar (red) |
+| `--color-danger` | `#ff6b6b` | Delete/destructive actions |
+
+### Font
+
+Inter (400, 600, 700) loaded via Google Fonts in `index.html`.
+
+### Reusable CSS Classes (defined in `App.css`)
+
+- `.card` — Standard card container (surface bg, border, 12px radius)
+- `.primary` — Accent-colored button (on `<button>`)
+- `.date-nav` — Centered flex row for date navigation arrows
+- `.meal-cards` — Vertical flex column for meal card list
+- `.goal-input` — Full-width input for goal fields
+
+### Base Element Styles (defined in `index.css`)
+
+`input`, `select`, and `button` have global styles (border-radius, colors, padding). Components generally don't need to repeat these — only add inline styles for layout-specific overrides like `flex: 1` or `width: 100%`.
+
+### Mobile-First Layout
+
+- Base max-width: `520px` (bumps to `560px` at 600px+)
+- Header stacks vertically below 600px
+- All views are cards-only (no desktop table layouts)
 
 ## Routing
 
@@ -52,7 +92,12 @@ Uses react-router-dom with 3 routes:
 
 ## Conventions
 
-- Inline styles throughout (no CSS framework yet)
+- Dark mode only (no light mode / `prefers-color-scheme` handling)
+- Use CSS custom properties (`var(--color-*)`) for all colors — never hardcode hex in components
+- Use `.card` class for card containers instead of inline border/bg/radius styles
+- Use `.primary` class for accent-colored action buttons
+- Minimal inline styles — only for layout (flex, gap, margin) not theming
+- `CalorieRingChart` is pure SVG (no charting library) for full control over ring rendering
 - All pages use hardcoded sample data as placeholders
 - UserSelector uses local component state (will lift to React context when wiring API)
 

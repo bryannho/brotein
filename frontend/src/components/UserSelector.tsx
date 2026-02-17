@@ -14,15 +14,7 @@ export default function UserSelector() {
     <select
       value={selectedUserId}
       onChange={(e) => setSelectedUserId(e.target.value)}
-      style={{
-        padding: '0.4em 0.8em',
-        fontSize: '0.9em',
-        borderRadius: '6px',
-        border: '1px solid #555',
-        background: '#1a1a1a',
-        color: 'inherit',
-        cursor: 'pointer',
-      }}
+      style={{ fontSize: '0.9em', cursor: 'pointer' }}
     >
       {placeholderUsers.map((user) => (
         <option key={user.id} value={user.id}>

@@ -6,78 +6,47 @@ interface Props {
   onSave: (goals: Goals) => void;
 }
 
-const inputStyle: React.CSSProperties = {
-  padding: '0.4em 0.6em',
-  fontSize: '1em',
-  borderRadius: '6px',
-  border: '1px solid #555',
-  background: '#2a2a2a',
-  color: 'inherit',
-  width: '120px',
-};
-
-const rowStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '0.75rem',
-};
+const fields = [
+  { key: 'calories_goal' as const, label: 'Calories Goal' },
+  { key: 'protein_goal' as const, label: 'Protein Goal (g)' },
+  { key: 'carbs_goal' as const, label: 'Carbs Goal (g)' },
+  { key: 'sugar_goal' as const, label: 'Sugar Goal (g)' },
+];
 
 export default function GoalForm({ goals, onSave }: Props) {
-  const [caloriesGoal, setCaloriesGoal] = useState(goals.calories_goal);
-  const [proteinGoal, setProteinGoal] = useState(goals.protein_goal);
-  const [carbsGoal, setCarbsGoal] = useState(goals.carbs_goal);
-  const [sugarGoal, setSugarGoal] = useState(goals.sugar_goal);
+  const [values, setValues] = useState({
+    calories_goal: goals.calories_goal,
+    protein_goal: goals.protein_goal,
+    carbs_goal: goals.carbs_goal,
+    sugar_goal: goals.sugar_goal,
+  });
 
   const handleSave = () => {
-    onSave({
-      user_id: goals.user_id,
-      calories_goal: caloriesGoal,
-      protein_goal: proteinGoal,
-      carbs_goal: carbsGoal,
-      sugar_goal: sugarGoal,
-    });
+    onSave({ user_id: goals.user_id, ...values });
   };
 
   return (
     <div>
-      <div style={rowStyle}>
-        <label>Calories Goal</label>
-        <input
-          type="number"
-          style={inputStyle}
-          value={caloriesGoal}
-          onChange={(e) => setCaloriesGoal(Number(e.target.value))}
-        />
-      </div>
-      <div style={rowStyle}>
-        <label>Protein Goal (g)</label>
-        <input
-          type="number"
-          style={inputStyle}
-          value={proteinGoal}
-          onChange={(e) => setProteinGoal(Number(e.target.value))}
-        />
-      </div>
-      <div style={rowStyle}>
-        <label>Carbs Goal (g)</label>
-        <input
-          type="number"
-          style={inputStyle}
-          value={carbsGoal}
-          onChange={(e) => setCarbsGoal(Number(e.target.value))}
-        />
-      </div>
-      <div style={rowStyle}>
-        <label>Sugar Goal (g)</label>
-        <input
-          type="number"
-          style={inputStyle}
-          value={sugarGoal}
-          onChange={(e) => setSugarGoal(Number(e.target.value))}
-        />
-      </div>
-      <button onClick={handleSave} style={{ marginTop: '0.5rem' }}>
+      {fields.map(({ key, label }) => (
+        <div
+          key={key}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '0.75rem',
+          }}
+        >
+          <label>{label}</label>
+          <input
+            type="number"
+            className="goal-input"
+            value={values[key]}
+            onChange={(e) => setValues({ ...values, [key]: Number(e.target.value) })}
+          />
+        </div>
+      ))}
+      <button onClick={handleSave} className="primary" style={{ marginTop: '0.5rem', width: '100%' }}>
         Save Goals
       </button>
     </div>

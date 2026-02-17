@@ -1,23 +1,72 @@
 import type { Meal } from '../types';
-import MealRowEditable from './MealRowEditable';
 
 interface Props {
   meals: Meal[];
 }
 
-const tableStyle: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  marginBottom: '1.5rem',
-};
-
-const thStyle: React.CSSProperties = {
-  padding: '0.5rem',
-  borderBottom: '1px solid #444',
-  textAlign: 'center',
-  fontSize: '0.85em',
-  opacity: 0.7,
-};
+function MealCard({
+  meal,
+  onUpdate,
+  onDelete,
+}: {
+  meal: Meal;
+  onUpdate: (mealId: string, field: string, value: number) => void;
+  onDelete: (mealId: string) => void;
+}) {
+  return (
+    <div className="card">
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.5rem',
+        }}
+      >
+        <span style={{ fontWeight: 600 }}>
+          {meal.text_input || '(no description)'}
+        </span>
+        <button
+          onClick={() => onDelete(meal.meal_id)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--color-danger)',
+            cursor: 'pointer',
+            fontSize: '1.1em',
+            padding: '0.2em 0.4em',
+          }}
+          title="Delete meal"
+        >
+          &times;
+        </button>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '0.5rem',
+        }}
+      >
+        {(['calories', 'protein', 'carbs', 'sugar'] as const).map((field) => (
+          <div key={field}>
+            <div style={{ fontSize: '0.75em', color: 'var(--color-text-secondary)', marginBottom: '0.15rem' }}>
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+            </div>
+            <input
+              type="number"
+              style={{ width: '100%', padding: '0.3em', fontSize: '0.9em', textAlign: 'center' }}
+              defaultValue={meal[field]}
+              onBlur={(e) =>
+                onUpdate(meal.meal_id, field, Number(e.target.value))
+              }
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function MealList({ meals }: Props) {
   const handleUpdate = (mealId: string, field: string, value: number) => {
@@ -30,34 +79,22 @@ export default function MealList({ meals }: Props) {
 
   if (meals.length === 0) {
     return (
-      <p style={{ textAlign: 'center', opacity: 0.6 }}>
+      <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
         No meals logged yet.
       </p>
     );
   }
 
   return (
-    <table style={tableStyle}>
-      <thead>
-        <tr>
-          <th style={{ ...thStyle, textAlign: 'left' }}>Meal</th>
-          <th style={thStyle}>Calories</th>
-          <th style={thStyle}>Protein</th>
-          <th style={thStyle}>Carbs</th>
-          <th style={thStyle}>Sugar</th>
-          <th style={thStyle}>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {meals.map((meal) => (
-          <MealRowEditable
-            key={meal.meal_id}
-            meal={meal}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div className="meal-cards">
+      {meals.map((meal) => (
+        <MealCard
+          key={meal.meal_id}
+          meal={meal}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
+      ))}
+    </div>
   );
 }

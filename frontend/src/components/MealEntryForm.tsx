@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export default function MealEntryForm() {
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,43 +14,77 @@ export default function MealEntryForm() {
     console.log('Submit meal:', { text, image });
     setText('');
     setImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: 'flex',
-        gap: '0.75rem',
-        alignItems: 'center',
-        padding: '1rem',
-        border: '1px solid #444',
-        borderRadius: '10px',
-        background: '#1e1e1e',
-      }}
-    >
-      <input
-        type="text"
-        placeholder="Describe your meal..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        style={{
-          flex: 1,
-          padding: '0.5em 0.75em',
-          fontSize: '1em',
-          borderRadius: '6px',
-          border: '1px solid #555',
-          background: '#2a2a2a',
-          color: 'inherit',
-        }}
-      />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setImage(e.target.files?.[0] ?? null)}
-        style={{ fontSize: '0.85em' }}
-      />
-      <button type="submit" style={{ whiteSpace: 'nowrap' }}>
+    <form onSubmit={handleSubmit} className="card" style={{ marginBottom: '1.25rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+        <input
+          type="text"
+          placeholder="Describe your meal..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          style={{ flex: 1 }}
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files?.[0] ?? null)}
+          style={{ display: 'none' }}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          style={{
+            background: image ? 'var(--color-calories)' : 'var(--color-surface-alt)',
+            borderColor: image ? 'transparent' : 'var(--color-border)',
+            color: image ? '#fff' : 'var(--color-text)',
+            padding: '0.5em 0.75em',
+            fontSize: '1.1em',
+            lineHeight: 1,
+          }}
+          title="Upload image"
+        >
+          &#128247;
+        </button>
+      </div>
+      {image && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '0.75rem',
+            fontSize: '0.85em',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {image.name}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setImage(null);
+              if (fileInputRef.current) fileInputRef.current.value = '';
+            }}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--color-danger)',
+              cursor: 'pointer',
+              padding: '0.1em 0.3em',
+              fontSize: '1em',
+              lineHeight: 1,
+            }}
+          >
+            &times;
+          </button>
+        </div>
+      )}
+      <button type="submit" className="primary" style={{ width: '100%' }}>
         Log Meal
       </button>
     </form>

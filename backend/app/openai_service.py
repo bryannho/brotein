@@ -31,6 +31,7 @@ Return ONLY valid JSON with the following keys:
 - calories (int)
 - protein (float, grams)
 - carbs (float, grams)
+- fat (float, grams)
 - sugar (float, grams)
 - error (string)
 
@@ -48,6 +49,7 @@ class ExtractionResult:
     calories: int
     protein: float
     carbs: float
+    fat: float
     sugar: float
     error: str
 
@@ -114,11 +116,12 @@ async def _call_openai(
         calories=int(data.get("calories", 0)),
         protein=float(data.get("protein", 0.0)),
         carbs=float(data.get("carbs", 0.0)),
+        fat=float(data.get("fat", 0.0)),
         sugar=float(data.get("sugar", 0.0)),
         error=str(data.get("error", "")),
     )
-    logger.info("Parsed result: calories=%d protein=%.1f carbs=%.1f sugar=%.1f error=%r",
-                result.calories, result.protein, result.carbs, result.sugar, result.error)
+    logger.info("Parsed result: calories=%d protein=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
+                result.calories, result.protein, result.carbs, result.fat, result.sugar, result.error)
     return result
 
 
@@ -138,6 +141,7 @@ async def extract_macros(
             calories=0,
             protein=0.0,
             carbs=0.0,
+            fat=0.0,
             sugar=0.0,
             error="OPENAI_API_KEY is not set",
         )
@@ -165,6 +169,7 @@ async def extract_macros(
         calories=0,
         protein=0.0,
         carbs=0.0,
+        fat=0.0,
         sugar=0.0,
         error=last_error or "Failed to extract macros after retries",
     )

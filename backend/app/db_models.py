@@ -19,6 +19,7 @@ class Meal(Base):
     calories = Column(Integer, nullable=False, default=0)
     protein = Column(Float, nullable=False, default=0)
     carbs = Column(Float, nullable=False, default=0)
+    fat = Column(Float, nullable=False, default=0)
     sugar = Column(Float, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False)
 
@@ -29,5 +30,6 @@ class Goal(Base):
     calories_goal = Column(Integer, nullable=False)
     protein_goal = Column(Float, nullable=False)
     carbs_goal = Column(Float, nullable=False)
+    fat_goal = Column(Float, nullable=False)
     sugar_goal = Column(Float, nullable=False)
     updated_at = Column(DateTime, nullable=False)

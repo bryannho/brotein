@@ -19,6 +19,7 @@ async def get_goals(user_id: str, db: Session = Depends(get_db)):
             calories_goal=0,
             protein_goal=0.0,
             carbs_goal=0.0,
+            fat_goal=0.0,
             sugar_goal=0.0,
             updated_at=datetime.now().isoformat(),
         )
@@ -27,6 +28,7 @@ async def get_goals(user_id: str, db: Session = Depends(get_db)):
         calories_goal=goal.calories_goal,
         protein_goal=goal.protein_goal,
         carbs_goal=goal.carbs_goal,
+        fat_goal=goal.fat_goal,
         sugar_goal=goal.sugar_goal,
         updated_at=goal.updated_at.isoformat(),
     )
@@ -39,6 +41,7 @@ async def set_goals(body: GoalsRequest, db: Session = Depends(get_db)):
         calories_goal=body.calories_goal,
         protein_goal=body.protein_goal,
         carbs_goal=body.carbs_goal,
+        fat_goal=body.fat_goal,
         sugar_goal=body.sugar_goal,
         updated_at=datetime.now(),
     )
@@ -50,6 +53,7 @@ async def set_goals(body: GoalsRequest, db: Session = Depends(get_db)):
         calories_goal=goal.calories_goal,
         protein_goal=goal.protein_goal,
         carbs_goal=goal.carbs_goal,
+        fat_goal=goal.fat_goal,
         sugar_goal=goal.sugar_goal,
         updated_at=goal.updated_at.isoformat(),
     )

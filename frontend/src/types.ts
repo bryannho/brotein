@@ -12,6 +12,7 @@ export interface Meal {
   calories: number;
   protein: number;
   carbs: number;
+  fat: number;
   sugar: number;
   created_at: string;
 }
@@ -20,6 +21,7 @@ export interface MacroTotals {
   calories: number;
   protein: number;
   carbs: number;
+  fat: number;
   sugar: number;
 }
 
@@ -46,5 +48,6 @@ export interface Goals {
   calories_goal: number;
   protein_goal: number;
   carbs_goal: number;
+  fat_goal: number;
   sugar_goal: number;
 }

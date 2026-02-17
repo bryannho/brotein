@@ -16,6 +16,8 @@ export default function DailySummaryCard({ totals, goals }: Props) {
         proteinGoal={goals?.protein_goal ?? 0}
         carbs={totals.carbs}
         carbsGoal={goals?.carbs_goal ?? 0}
+        fat={totals.fat}
+        fatGoal={goals?.fat_goal ?? 0}
         sugar={totals.sugar}
         sugarGoal={goals?.sugar_goal ?? 0}
       />

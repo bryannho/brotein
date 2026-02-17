@@ -19,6 +19,7 @@ class MealResponse(BaseModel):
     calories: int
     protein: float
     carbs: float
+    fat: float
     sugar: float
     error: str = ""
     created_at: str = ""
@@ -28,6 +29,7 @@ class MealUpdate(BaseModel):
     calories: int
     protein: float
     carbs: float
+    fat: float
     sugar: float
 
 
@@ -35,6 +37,7 @@ class MacroTotals(BaseModel):
     calories: int
     protein: float
     carbs: float
+    fat: float
     sugar: float
 
 
@@ -49,6 +52,7 @@ class DayGoal(BaseModel):
     calories: int
     protein: float
     carbs: float
+    fat: float
     sugar: float
 
 
@@ -68,6 +72,7 @@ class GoalsRequest(BaseModel):
     calories_goal: int
     protein_goal: float
     carbs_goal: float
+    fat_goal: float
     sugar_goal: float
 
 
@@ -76,5 +81,6 @@ class GoalsResponse(BaseModel):
     calories_goal: int
     protein_goal: float
     carbs_goal: float
+    fat_goal: float
     sugar_goal: float
     updated_at: str

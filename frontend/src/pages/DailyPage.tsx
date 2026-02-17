@@ -28,7 +28,7 @@ export default function DailyPage() {
   const today = formatDate(new Date());
   const [currentDate, setCurrentDate] = useState(today);
   const [meals, setMeals] = useState<Meal[]>([]);
-  const [totals, setTotals] = useState<MacroTotals>({ calories: 0, protein: 0, carbs: 0, sugar: 0 });
+  const [totals, setTotals] = useState<MacroTotals>({ calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 });
   const [goals, setGoals] = useState<Goals | null>(null);
 
   const loadDaily = useCallback(async () => {
@@ -39,7 +39,7 @@ export default function DailyPage() {
       setTotals(data.totals);
     } catch {
       setMeals([]);
-      setTotals({ calories: 0, protein: 0, carbs: 0, sugar: 0 });
+      setTotals({ calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 });
     }
   }, [currentDate, selectedUser]);
 

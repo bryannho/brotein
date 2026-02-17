@@ -84,6 +84,12 @@ export default function WeeklyCharts({ days }: Props) {
     Goal: d.goal.carbs,
   }));
 
+  const fatData = days.map((d) => ({
+    date: d.date.slice(5),
+    Actual: d.actual.fat,
+    Goal: d.goal.fat,
+  }));
+
   const sugarData = days.map((d) => ({
     date: d.date.slice(5),
     Actual: d.actual.sugar,
@@ -115,6 +121,14 @@ export default function WeeklyCharts({ days }: Props) {
         goalKey="Goal"
         actualColor="#ffd43b"
         goalColor="#8a7d3a"
+      />
+      <MacroChart
+        title="Fat (g)"
+        data={fatData}
+        actualKey="Actual"
+        goalKey="Goal"
+        actualColor="#f4a261"
+        goalColor="#8a5e38"
       />
       <MacroChart
         title="Sugar (g)"

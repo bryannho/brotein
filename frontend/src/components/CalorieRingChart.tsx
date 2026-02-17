@@ -5,6 +5,8 @@ interface Props {
   proteinGoal: number;
   carbs: number;
   carbsGoal: number;
+  fat: number;
+  fatGoal: number;
   sugar: number;
   sugarGoal: number;
 }
@@ -88,6 +90,8 @@ export default function CalorieRingChart({
   proteinGoal,
   carbs,
   carbsGoal,
+  fat,
+  fatGoal,
   sugar,
   sugarGoal,
 }: Props) {
@@ -123,6 +127,7 @@ export default function CalorieRingChart({
       <div style={{ display: 'flex', gap: '1.75rem', justifyContent: 'center' }}>
         <SmallRing label="Protein" value={protein} goal={proteinGoal} color="var(--color-protein)" />
         <SmallRing label="Carbs" value={carbs} goal={carbsGoal} color="var(--color-carbs)" />
+        <SmallRing label="Fat" value={fat} goal={fatGoal} color="var(--color-fat)" />
         <SmallRing label="Sugar" value={sugar} goal={sugarGoal} color="var(--color-sugar)" />
       </div>
     </div>

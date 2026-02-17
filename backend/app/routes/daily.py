@@ -21,6 +21,7 @@ async def get_daily(date: str, user_id: str, db: Session = Depends(get_db)):
         calories=sum(m.calories for m in meals),
         protein=sum(m.protein for m in meals),
         carbs=sum(m.carbs for m in meals),
+        fat=sum(m.fat for m in meals),
         sugar=sum(m.sugar for m in meals),
     )
 
@@ -33,6 +34,7 @@ async def get_daily(date: str, user_id: str, db: Session = Depends(get_db)):
             calories=m.calories,
             protein=m.protein,
             carbs=m.carbs,
+            fat=m.fat,
             sugar=m.sugar,
             created_at=m.created_at.isoformat(),
         )

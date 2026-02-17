@@ -19,6 +19,7 @@ async def get_weekly(user_id: str, db: Session = Depends(get_db)):
         calories=goal.calories_goal if goal else 0,
         protein=goal.protein_goal if goal else 0.0,
         carbs=goal.carbs_goal if goal else 0.0,
+        fat=goal.fat_goal if goal else 0.0,
         sugar=goal.sugar_goal if goal else 0.0,
     )
 
@@ -34,6 +35,7 @@ async def get_weekly(user_id: str, db: Session = Depends(get_db)):
             calories=sum(m.calories for m in meals),
             protein=sum(m.protein for m in meals),
             carbs=sum(m.carbs for m in meals),
+            fat=sum(m.fat for m in meals),
             sugar=sum(m.sugar for m in meals),
         )
         days.append(DayEntry(date=str(d), goal=goal_data, actual=actual))

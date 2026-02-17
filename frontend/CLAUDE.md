@@ -25,11 +25,11 @@ frontend/
     components/
       Header.tsx                     — Nav bar: brand + NavLinks (Daily/Weekly/Account) + UserSelector
       UserSelector.tsx               — User dropdown (driven by UserContext)
-      CalorieRingChart.tsx           — Custom SVG radial chart (calorie ring + 3 macro rings)
+      CalorieRingChart.tsx           — Custom SVG radial chart (calorie ring + 4 macro rings)
       DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
       MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
       MealEntryForm.tsx              — Text input + hidden file input with camera button + submit
-      WeeklyCharts.tsx               — Four separate recharts BarCharts (Calories, Protein, Carbs, Sugar) via MacroChart helper + custom tooltip
+      WeeklyCharts.tsx               — Five separate recharts BarCharts (Calories, Protein, Carbs, Fat, Sugar) via MacroChart helper + custom tooltip
       GoalForm.tsx                   — Goal inputs (uses type="text" + inputMode="decimal" + regex validation instead of type="number" to allow clearing) + save
     pages/
       DailyPage.tsx                  — Date nav > ring chart > meal form > meal cards
@@ -56,6 +56,7 @@ frontend/
 | `--color-calories` | `#7c83ff` | Calories accent (blue-violet) |
 | `--color-protein` | `#4ecdc4` | Protein (teal) |
 | `--color-carbs` | `#ffd43b` | Carbs (warm yellow) |
+| `--color-fat` | `#f4a261` | Fat (orange) |
 | `--color-sugar` | `#ff6b6b` | Sugar (red) |
 | `--color-danger` | `#ff6b6b` | Delete/destructive actions |
 
@@ -114,7 +115,7 @@ All pages are wired to real API endpoints via `api.ts` and `useUser()` hook. No 
 
 - `DailyPage` passes `onMealCreated` to `MealEntryForm` and `onMutated` to `MealList` — both trigger a re-fetch of daily data
 - `MealEntryForm` accepts `userId` and `onMealCreated` props; shows loading state while submitting
-- `MealList` accepts `onMutated` prop; calls `updateMeal` (with all four macro fields) on blur and `deleteMeal` on delete
+- `MealList` accepts `onMutated` prop; calls `updateMeal` (with all five macro fields) on blur and `deleteMeal` on delete
 - `WeeklyPage` fetches weekly data when selectedUser changes
 - `AccountPage` fetches goals per user, creates users via `createUser` + `refreshUsers`, saves goals via `saveGoals`
 - `GoalForm` receives `key={selectedUser.id}` to reset internal state on user switch

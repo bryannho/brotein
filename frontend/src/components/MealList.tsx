@@ -50,7 +50,7 @@ function MealCard({
           gap: '0.5rem',
         }}
       >
-        {(['calories', 'protein', 'carbs', 'sugar'] as const).map((field) => (
+        {(['calories', 'protein', 'carbs', 'fat', 'sugar'] as const).map((field) => (
           <div key={field}>
             <div style={{ fontSize: '0.75em', color: 'var(--color-text-secondary)', marginBottom: '0.15rem' }}>
               {field.charAt(0).toUpperCase() + field.slice(1)}
@@ -78,6 +78,7 @@ export default function MealList({ meals, onMutated }: Props) {
       calories: meal.calories,
       protein: meal.protein,
       carbs: meal.carbs,
+      fat: meal.fat,
       sugar: meal.sugar,
       [field]: value,
     };

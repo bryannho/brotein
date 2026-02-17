@@ -89,7 +89,7 @@ brotein/
 
 ### Overview
 
-A lightweight web app for tracking daily calories and macros (protein, carbs, sugar). Users can log meals via **text and/or image**, and the backend will use the **OpenAI API** to extract macro totals in a structured format. The app supports multiple users, but **no authentication**—users simply switch accounts via dropdown.
+A lightweight web app for tracking daily calories and macros (protein, carbs, fat, sugar). Users can log meals via **text and/or image**, and the backend will use the **OpenAI API** to extract macro totals in a structured format. The app supports multiple users, but **no authentication**—users simply switch accounts via dropdown.
 
 ---
 
@@ -107,6 +107,7 @@ Track meals for a specific day and see daily totals.
     - Calories
     - Protein (g)
     - Carbs (g)
+    - Fat (g)
     - Sugar (g)
 - Shows a **list of meals logged for that day**
     - Each meal entry includes:
@@ -114,6 +115,7 @@ Track meals for a specific day and see daily totals.
         - Calories
         - Protein
         - Carbs
+        - Fat
         - Sugar
         - Timestamp (or created time)
 - Meal macros must be **editable**
@@ -121,6 +123,7 @@ Track meals for a specific day and see daily totals.
         - calories
         - protein
         - carbs
+        - fat
         - sugar
     - Changes should immediately persist to DB (save button or autosave)
 - Meal input supports:
@@ -154,6 +157,7 @@ Show progress vs goals across the last 7 days.
 2. **Macros graph**
     - Protein actual vs goal
     - Carbs actual vs goal
+    - Fat actual vs goal
     - Sugar actual vs goal
     - displayed together
 
@@ -165,6 +169,7 @@ Each day should have:
 - Goal calories vs actual calories
 - Goal protein vs actual protein
 - Goal carbs vs actual carbs
+- Goal fat vs actual fat
 - Goal sugar vs actual sugar
 
 ---
@@ -183,6 +188,7 @@ User selection + goal setting.
     - calories_goal (int)
     - protein_goal (float)
     - carbs_goal (float)
+    - fat_goal (float)
     - sugar_goal (float)
 
 Goals update affects:
@@ -248,6 +254,7 @@ All OpenAI responses must follow this structure:
   "calories": 0,
   "protein": 0.0,
   "carbs": 0.0,
+  "fat": 0.0,
   "sugar": 0.0,
   "error": ""
 }
@@ -291,6 +298,7 @@ Return ONLY valid JSON with the following keys:
 - calories (int)
 - protein (float, grams)
 - carbs (float, grams)
+- fat (float, grams)
 - sugar (float, grams)
 - error (string)
 
@@ -334,6 +342,7 @@ Creates a meal entry using OpenAI extraction.
   "calories": 650,
   "protein": 42.0,
   "carbs": 70.0,
+  "fat": 20.0,
   "sugar": 6.0,
   "error": ""
 }
@@ -352,6 +361,7 @@ Allows editing macros manually.
   "calories": 700,
   "protein": 45.0,
   "carbs": 75.0,
+  "fat": 22.0,
   "sugar": 6.0
 }
 ```
@@ -384,6 +394,7 @@ Returns all meals + totals for that day.
     "calories": 2100,
     "protein": 160.0,
     "carbs": 220.0,
+    "fat": 70.0,
     "sugar": 40.0
   },
   "meals": [
@@ -393,6 +404,7 @@ Returns all meals + totals for that day.
       "calories": 520,
       "protein": 35.0,
       "carbs": 40.0,
+      "fat": 25.0,
       "sugar": 8.0,
       "created_at": "..."
     }
@@ -416,8 +428,8 @@ Returns last 7 days goals vs actual totals.
   "days": [
     {
       "date": "2026-02-10",
-      "goal": { "calories": 2200, "protein": 160, "carbs": 200, "sugar": 40 },
-      "actual": { "calories": 2050, "protein": 150, "carbs": 180, "sugar": 35 }
+      "goal": { "calories": 2200, "protein": 160, "carbs": 200, "fat": 70, "sugar": 40 },
+      "actual": { "calories": 2050, "protein": 150, "carbs": 180, "fat": 65, "sugar": 35 }
     }
   ]
 }
@@ -463,6 +475,7 @@ Updates goals.
   "calories_goal": 2200,
   "protein_goal": 160,
   "carbs_goal": 200,
+  "fat_goal": 70,
   "sugar_goal": 40
 }
 ```
@@ -492,6 +505,7 @@ Updates goals.
 | calories | INTEGER | default 0 |
 | protein | REAL | default 0 |
 | carbs | REAL | default 0 |
+| fat | REAL | default 0 |
 | sugar | REAL | default 0 |
 | created_at | DATETIME |  |
 
@@ -507,6 +521,7 @@ Updates goals.
 | calories_goal | INTEGER |  |
 | protein_goal | REAL |  |
 | carbs_goal | REAL |  |
+| fat_goal | REAL |  |
 | sugar_goal | REAL |  |
 | updated_at | DATETIME |  |
 

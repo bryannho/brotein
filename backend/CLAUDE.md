@@ -59,13 +59,13 @@ ORM models live in `db_models.py` (separate from Pydantic `models.py`).
 Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup via lifespan. DB file: `backend/brotein.db`.
 
 - **users** — id (TEXT PK), name (TEXT), created_at (DATETIME)
-- **meals** — id (TEXT PK), user_id (TEXT FK), meal_date (DATE), text_input (TEXT nullable), calories (INT), protein (REAL), carbs (REAL), sugar (REAL), created_at (DATETIME)
-- **goals** — user_id (TEXT PK FK), calories_goal (INT), protein_goal (REAL), carbs_goal (REAL), sugar_goal (REAL), updated_at (DATETIME)
+- **meals** — id (TEXT PK), user_id (TEXT FK), meal_date (DATE), text_input (TEXT nullable), calories (INT), protein (REAL), carbs (REAL), fat (REAL), sugar (REAL), created_at (DATETIME)
+- **goals** — user_id (TEXT PK FK), calories_goal (INT), protein_goal (REAL), carbs_goal (REAL), fat_goal (REAL), sugar_goal (REAL), updated_at (DATETIME)
 
 ## OpenAI Integration (`openai_service.py`)
 
 - **Public API**: `extract_macros(text: str | None, image_bytes: bytes | None) -> ExtractionResult`
-  - `ExtractionResult` is a dataclass with fields: `calories` (int), `protein` (float), `carbs` (float), `sugar` (float), `error` (str)
+  - `ExtractionResult` is a dataclass with fields: `calories` (int), `protein` (float), `carbs` (float), `fat` (float), `sugar` (float), `error` (str)
 - **Requires** `OPENAI_API_KEY` env var (loaded from `.env` at project root `/bigger/.env` via `python-dotenv`)
 - **Model**: `gpt-4o` (supports both text and image inputs)
 - **Retry behavior**: Makes an initial attempt plus up to 2 retries when the OpenAI response contains a non-empty `error` field

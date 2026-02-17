@@ -34,7 +34,7 @@ export function createMeal(userId: string, date: string, text?: string, image?: 
   return fetchJSON('/api/meal', { method: 'POST', body: form });
 }
 
-export function updateMeal(mealId: string, macros: { calories: number; protein: number; carbs: number; sugar: number }): Promise<Meal> {
+export function updateMeal(mealId: string, macros: { calories: number; protein: number; carbs: number; fat: number; sugar: number }): Promise<Meal> {
   return fetchJSON(`/api/meal/${mealId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

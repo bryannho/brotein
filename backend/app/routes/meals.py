@@ -24,6 +24,7 @@ def _meal_to_response(meal: Meal, error: str = "") -> MealResponse:
         calories=meal.calories,
         protein=meal.protein,
         carbs=meal.carbs,
+        fat=meal.fat,
         sugar=meal.sugar,
         error=error,
         created_at=meal.created_at.isoformat(),
@@ -51,8 +52,8 @@ async def create_meal(
                 user_id, repr(text), image_bytes is not None, parsed_date)
 
     result = await extract_macros(text, image_bytes)
-    logger.info("create_meal: extraction result — cal=%d pro=%.1f carbs=%.1f sugar=%.1f error=%r",
-                result.calories, result.protein, result.carbs, result.sugar, result.error)
+    logger.info("create_meal: extraction result — cal=%d pro=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
+                result.calories, result.protein, result.carbs, result.fat, result.sugar, result.error)
 
     meal = Meal(
         id=str(uuid4()),
@@ -62,6 +63,7 @@ async def create_meal(
         calories=result.calories,
         protein=result.protein,
         carbs=result.carbs,
+        fat=result.fat,
         sugar=result.sugar,
         created_at=datetime.now(),
     )
@@ -82,6 +84,7 @@ async def update_meal(
     meal.calories = body.calories
     meal.protein = body.protein
     meal.carbs = body.carbs
+    meal.fat = body.fat
     meal.sugar = body.sugar
     db.commit()
     db.refresh(meal)

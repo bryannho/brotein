@@ -15,14 +15,26 @@ const fields = [
 
 export default function GoalForm({ goals, onSave }: Props) {
   const [values, setValues] = useState({
-    calories_goal: goals.calories_goal,
-    protein_goal: goals.protein_goal,
-    carbs_goal: goals.carbs_goal,
-    sugar_goal: goals.sugar_goal,
+    calories_goal: String(goals.calories_goal),
+    protein_goal: String(goals.protein_goal),
+    carbs_goal: String(goals.carbs_goal),
+    sugar_goal: String(goals.sugar_goal),
   });
 
+  const handleChange = (key: keyof typeof values, raw: string) => {
+    if (/^\d*\.?\d*$/.test(raw)) {
+      setValues({ ...values, [key]: raw });
+    }
+  };
+
   const handleSave = () => {
-    onSave({ user_id: goals.user_id, ...values });
+    onSave({
+      user_id: goals.user_id,
+      calories_goal: Number(values.calories_goal) || 0,
+      protein_goal: Number(values.protein_goal) || 0,
+      carbs_goal: Number(values.carbs_goal) || 0,
+      sugar_goal: Number(values.sugar_goal) || 0,
+    });
   };
 
   return (
@@ -39,10 +51,11 @@ export default function GoalForm({ goals, onSave }: Props) {
         >
           <label>{label}</label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             className="goal-input"
             value={values[key]}
-            onChange={(e) => setValues({ ...values, [key]: Number(e.target.value) })}
+            onChange={(e) => handleChange(key, e.target.value)}
           />
         </div>
       ))}

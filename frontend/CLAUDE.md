@@ -29,8 +29,8 @@ frontend/
       DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
       MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
       MealEntryForm.tsx              — Text input + hidden file input with camera button + submit
-      WeeklyCharts.tsx               — Two recharts BarCharts (calories + macros) with custom tooltip
-      GoalForm.tsx                   — Goal number inputs (mapped from field config) + save
+      WeeklyCharts.tsx               — Four separate recharts BarCharts (Calories, Protein, Carbs, Sugar) via MacroChart helper + custom tooltip
+      GoalForm.tsx                   — Goal inputs (uses type="text" + inputMode="decimal" + regex validation instead of type="number" to allow clearing) + save
     pages/
       DailyPage.tsx                  — Date nav > ring chart > meal form > meal cards
       WeeklyPage.tsx                 — Weekly overview with charts

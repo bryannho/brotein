@@ -17,9 +17,10 @@ backend/
     database.py      — SQLAlchemy engine, SessionLocal, Base, init_db(), get_db() dependency
     db_models.py     — SQLAlchemy ORM models (User, Meal, Goal)
     models.py        — Pydantic request/response models
+    openai_service.py — OpenAI integration for macro extraction
     routes/
       __init__.py
-      meals.py       — POST /api/meal, PUT /api/meal/{id}, DELETE /api/meal/{id}
+      meals.py       — POST /api/meal (with OpenAI extraction), PUT /api/meal/{id}, DELETE /api/meal/{id}
       daily.py       — GET /api/daily/{date}?user_id=
       weekly.py      — GET /api/weekly?user_id=
       users.py       — GET /api/users, POST /api/users
@@ -61,10 +62,20 @@ Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup v
 - **meals** — id (TEXT PK), user_id (TEXT FK), meal_date (DATE), text_input (TEXT nullable), calories (INT), protein (REAL), carbs (REAL), sugar (REAL), created_at (DATETIME)
 - **goals** — user_id (TEXT PK FK), calories_goal (INT), protein_goal (REAL), carbs_goal (REAL), sugar_goal (REAL), updated_at (DATETIME)
 
+## OpenAI Integration (`openai_service.py`)
+
+- **Public API**: `extract_macros(text: str | None, image_bytes: bytes | None) -> ExtractionResult`
+  - `ExtractionResult` is a dataclass with fields: `calories` (int), `protein` (float), `carbs` (float), `sugar` (float), `error` (str)
+- **Requires** `OPENAI_API_KEY` env var (loaded from `.env` at project root `/bigger/.env` via `python-dotenv`)
+- **Model**: `gpt-4o` (supports both text and image inputs)
+- **Retry behavior**: Makes an initial attempt plus up to 2 retries when the OpenAI response contains a non-empty `error` field
+- **Failure mode**: On total failure (exceptions or all retries exhausted), returns zeros for all macro fields with an error message
+- **Image handling**: Images are base64-encoded in memory and sent as `image_url` content parts; no persistent image storage
+
 ## Key Dependencies
 
-- fastapi, uvicorn, python-multipart, sqlalchemy
+- fastapi, uvicorn, python-multipart, sqlalchemy, openai, python-dotenv
 
 ## Current Status
 
-All endpoints are wired to SQLite via SQLAlchemy ORM. CRUD operations work for users, meals, goals, daily summaries, and weekly reports. OpenAI integration for meal macro extraction is not yet implemented.
+All endpoints are wired to SQLite via SQLAlchemy ORM. CRUD operations work for users, meals, goals, daily summaries, and weekly reports. OpenAI integration is implemented: `POST /api/meal` calls the OpenAI API to extract macro nutrients from meal text and/or images.

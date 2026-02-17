@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <header className="header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.4em', margin: 0 }}>bigger</h1>
+        <h1 style={{ fontSize: '1.4em', margin: 0 }}>brotein</h1>
         <nav>
           <NavLink to="/daily" className={({ isActive }) => isActive ? 'active' : ''}>
             Daily

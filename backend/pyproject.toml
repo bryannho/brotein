@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "bigger-backend"
+name = "brotein-backend"
 version = "0.1.0"
-description = "FastAPI backend for Bigger"
+description = "FastAPI backend for brotein"
 readme = "README.md"
 package-mode = false
 

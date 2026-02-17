@@ -1,4 +1,4 @@
-# Bigger
+# brotein
 
 Full-stack monorepo: Vite + React frontend, FastAPI backend, SQLite database — deployed as a single Docker container.
 
@@ -43,8 +43,8 @@ The dev server runs at `http://localhost:5173` and proxies `/api` requests to th
 Build and run the production container:
 
 ```bash
-docker build -t bigger .
-docker run -p 8000:8000 bigger
+docker build -t brotein .
+docker run -p 8000:8000 brotein
 ```
 
 The app will be available at `http://localhost:8000`.
@@ -52,13 +52,13 @@ The app will be available at `http://localhost:8000`.
 Set a custom port with the `PORT` env var:
 
 ```bash
-docker run -p 3000:3000 -e PORT=3000 bigger
+docker run -p 3000:3000 -e PORT=3000 brotein
 ```
 
 ## Project Structure
 
 ```
-bigger/
+brotein/
 ├── frontend/          # Vite + React + TypeScript
 │   ├── src/
 │   ├── public/

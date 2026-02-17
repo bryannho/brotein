@@ -1,4 +1,4 @@
-# Bigger
+# brotein
 
 ## Architecture
 
@@ -37,13 +37,13 @@ pnpm build      # production build → dist/
 ## Project File Structure
 
 ```
-bigger/
+brotein/
   CLAUDE.md
   Dockerfile
   backend/
     CLAUDE.md
     pyproject.toml
-    bigger.db                          (created on first startup)
+    brotein.db                         (created on first startup)
     app/
       __init__.py
       main.py                          — FastAPI entry point, lifespan, router includes, SPA serving

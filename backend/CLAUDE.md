@@ -24,7 +24,7 @@ backend/
       users.py       — GET /api/users, POST /api/users
       goals.py       — GET /api/goals?user_id=, POST /api/goals
   pyproject.toml
-  bigger.db          — SQLite database (created on first startup)
+  brotein.db         — SQLite database (created on first startup)
 ```
 
 ## API Endpoints
@@ -44,7 +44,7 @@ backend/
 
 ## Database Schema (SQLite)
 
-Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup via lifespan. DB file: `backend/bigger.db`.
+Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup via lifespan. DB file: `backend/brotein.db`.
 
 - **users** — id (TEXT PK), name (TEXT), created_at (DATETIME)
 - **meals** — id (TEXT PK), user_id (TEXT FK), meal_date (DATE), text_input (TEXT nullable), calories (INT), protein (REAL), carbs (REAL), sugar (REAL), created_at (DATETIME)

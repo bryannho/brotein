@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "bigger-backend"
+version = "0.1.0"
+description = "FastAPI backend for Bigger"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115"
+uvicorn = { version = "^0.34", extras = ["standard"] }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

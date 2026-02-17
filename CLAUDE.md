@@ -47,7 +47,8 @@ brotein/
     app/
       __init__.py
       main.py                          — FastAPI entry point, lifespan, router includes, SPA serving
-      database.py                      — SQLite init_db() + get_connection()
+      database.py                      — SQLAlchemy engine, SessionLocal, Base, get_db() dependency
+      db_models.py                     — SQLAlchemy ORM models (User, Meal, Goal)
       models.py                        — Pydantic request/response models
       routes/
         __init__.py
@@ -62,24 +63,26 @@ brotein/
     package.json
     vite.config.ts
     src/
-      main.tsx                         — Entry point (BrowserRouter)
+      main.tsx                         — Entry point (BrowserRouter + UserProvider)
       App.tsx                          — Routes + Header
       App.css                          — Root container styles
       index.css                        — Global styles
       types.ts                         — Shared TS interfaces
+      api.ts                           — Typed fetch wrappers for all API endpoints
+      context/
+        UserContext.tsx                — UserProvider + useUser() hook (localStorage persistence)
       components/
         Header.tsx                     — Nav bar + UserSelector
-        UserSelector.tsx               — User dropdown
+        UserSelector.tsx               — User dropdown (context-driven)
         DailySummaryCard.tsx           — Macro totals card
-        MealList.tsx                   — Meal table
-        MealRowEditable.tsx            — Editable meal row
-        MealEntryForm.tsx              — Meal input form
+        MealList.tsx                   — Meal cards with inline editing + API calls
+        MealEntryForm.tsx              — Meal input form + API submission
         WeeklyCharts.tsx               — Recharts bar charts
         GoalForm.tsx                   — Goal setting form
       pages/
-        DailyPage.tsx                  — Daily view
-        WeeklyPage.tsx                 — Weekly view
-        AccountPage.tsx                — Account/goals view
+        DailyPage.tsx                  — Daily view (fetches daily data + goals)
+        WeeklyPage.tsx                 — Weekly view (fetches weekly data)
+        AccountPage.tsx                — Account/goals view (create users + set goals)
 ```
 
 ## Full MVP Spec

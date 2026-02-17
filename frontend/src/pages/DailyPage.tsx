@@ -1,55 +1,16 @@
-import { useState } from 'react';
-import type { Meal, Goals } from '../types';
+import { useState, useEffect, useCallback } from 'react';
+import type { Meal, Goals, MacroTotals } from '../types';
+import { useUser } from '../context/UserContext';
+import { fetchDaily, fetchGoals } from '../api';
 import DailySummaryCard from '../components/DailySummaryCard';
 import MealList from '../components/MealList';
 import MealEntryForm from '../components/MealEntryForm';
 
-const sampleGoals: Goals = {
-  user_id: '1',
-  calories_goal: 2200,
-  protein_goal: 160,
-  carbs_goal: 200,
-  sugar_goal: 40,
-};
-
-const sampleMeals: Meal[] = [
-  {
-    meal_id: 'meal-1',
-    user_id: '1',
-    date: '2026-02-16',
-    text_input: 'Chipotle chicken bowl with rice and guac',
-    calories: 750,
-    protein: 45,
-    carbs: 72,
-    sugar: 6,
-    created_at: '2026-02-16T12:30:00Z',
-  },
-  {
-    meal_id: 'meal-2',
-    user_id: '1',
-    date: '2026-02-16',
-    text_input: 'Protein shake with banana',
-    calories: 320,
-    protein: 35,
-    carbs: 28,
-    sugar: 18,
-    created_at: '2026-02-16T08:00:00Z',
-  },
-  {
-    meal_id: 'meal-3',
-    user_id: '1',
-    date: '2026-02-16',
-    text_input: 'Grilled salmon with steamed broccoli',
-    calories: 480,
-    protein: 42,
-    carbs: 12,
-    sugar: 3,
-    created_at: '2026-02-16T18:45:00Z',
-  },
-];
-
 function formatDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function displayDate(dateStr: string): string {
@@ -63,20 +24,43 @@ function displayDate(dateStr: string): string {
 }
 
 export default function DailyPage() {
+  const { selectedUser } = useUser();
   const today = formatDate(new Date());
   const [currentDate, setCurrentDate] = useState(today);
+  const [meals, setMeals] = useState<Meal[]>([]);
+  const [totals, setTotals] = useState<MacroTotals>({ calories: 0, protein: 0, carbs: 0, sugar: 0 });
+  const [goals, setGoals] = useState<Goals | null>(null);
 
-  const meals = sampleMeals;
+  const loadDaily = useCallback(async () => {
+    if (!selectedUser) return;
+    try {
+      const data = await fetchDaily(currentDate, selectedUser.id);
+      setMeals(data.meals);
+      setTotals(data.totals);
+    } catch {
+      setMeals([]);
+      setTotals({ calories: 0, protein: 0, carbs: 0, sugar: 0 });
+    }
+  }, [currentDate, selectedUser]);
 
-  const totals = meals.reduce(
-    (acc, m) => ({
-      calories: acc.calories + m.calories,
-      protein: acc.protein + m.protein,
-      carbs: acc.carbs + m.carbs,
-      sugar: acc.sugar + m.sugar,
-    }),
-    { calories: 0, protein: 0, carbs: 0, sugar: 0 },
-  );
+  const loadGoals = useCallback(async () => {
+    if (!selectedUser) return;
+    try {
+      setGoals(await fetchGoals(selectedUser.id));
+    } catch {
+      setGoals(null);
+    }
+  }, [selectedUser]);
+
+  useEffect(() => {
+    loadDaily();
+  }, [loadDaily]);
+
+  useEffect(() => {
+    loadGoals();
+  }, [loadGoals]);
+
+  if (!selectedUser) return null;
 
   const goBack = () => {
     const d = new Date(currentDate + 'T00:00:00');
@@ -109,9 +93,9 @@ export default function DailyPage() {
         </button>
       </div>
 
-      <DailySummaryCard totals={totals} goals={sampleGoals} />
-      <MealEntryForm />
-      <MealList meals={meals} />
+      <DailySummaryCard totals={totals} goals={goals ?? undefined} />
+      <MealEntryForm userId={selectedUser.id} date={currentDate} onMealCreated={loadDaily} />
+      <MealList meals={meals} onMutated={loadDaily} />
     </div>
   );
 }

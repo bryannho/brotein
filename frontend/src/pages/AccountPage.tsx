@@ -1,27 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Goals } from '../types';
+import { useUser } from '../context/UserContext';
+import { createUser, fetchGoals, saveGoals } from '../api';
 import GoalForm from '../components/GoalForm';
 
-const initialGoals: Goals = {
-  user_id: '1',
-  calories_goal: 2200,
-  protein_goal: 160,
-  carbs_goal: 200,
-  sugar_goal: 40,
-};
-
 export default function AccountPage() {
+  const { selectedUser, refreshUsers } = useUser();
   const [newUserName, setNewUserName] = useState('');
+  const [goals, setGoals] = useState<Goals | null>(null);
 
-  const handleCreateUser = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!selectedUser) {
+      setGoals(null);
+      return;
+    }
+    fetchGoals(selectedUser.id)
+      .then(setGoals)
+      .catch(() => setGoals(null));
+  }, [selectedUser]);
+
+  const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newUserName.trim()) return;
-    console.log('Create user:', newUserName);
-    setNewUserName('');
+    try {
+      await createUser(newUserName.trim());
+      setNewUserName('');
+      await refreshUsers();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to create user.');
+    }
   };
 
-  const handleSaveGoals = (goals: Goals) => {
-    console.log('Save goals:', goals);
+  const handleSaveGoals = async (updated: Goals) => {
+    try {
+      const saved = await saveGoals(updated);
+      setGoals(saved);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to save goals.');
+    }
   };
 
   return (
@@ -45,10 +61,12 @@ export default function AccountPage() {
         </form>
       </section>
 
-      <section className="card">
-        <h3 style={{ marginTop: 0 }}>Daily Goals</h3>
-        <GoalForm goals={initialGoals} onSave={handleSaveGoals} />
-      </section>
+      {selectedUser && goals && (
+        <section className="card">
+          <h3 style={{ marginTop: 0 }}>Daily Goals</h3>
+          <GoalForm key={selectedUser.id} goals={goals} onSave={handleSaveGoals} />
+        </section>
+      )}
     </div>
   );
 }

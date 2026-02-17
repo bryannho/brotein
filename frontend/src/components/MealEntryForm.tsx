@@ -1,20 +1,36 @@
 import { useRef, useState } from 'react';
+import { createMeal } from '../api';
 
-export default function MealEntryForm() {
+interface Props {
+  userId: string;
+  date: string;
+  onMealCreated: () => void;
+}
+
+export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim() && !image) {
       alert('Please provide a meal description or image.');
       return;
     }
-    console.log('Submit meal:', { text, image });
-    setText('');
-    setImage(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    setSubmitting(true);
+    try {
+      await createMeal(userId, date, text.trim() || undefined, image || undefined);
+      setText('');
+      setImage(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      onMealCreated();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to log meal.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -26,6 +42,7 @@ export default function MealEntryForm() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           style={{ flex: 1 }}
+          disabled={submitting}
         />
         <input
           ref={fileInputRef}
@@ -37,6 +54,7 @@ export default function MealEntryForm() {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
+          disabled={submitting}
           style={{
             background: image ? 'var(--color-calories)' : 'var(--color-surface-alt)',
             borderColor: image ? 'transparent' : 'var(--color-border)',
@@ -84,8 +102,8 @@ export default function MealEntryForm() {
           </button>
         </div>
       )}
-      <button type="submit" className="primary" style={{ width: '100%' }}>
-        Log Meal
+      <button type="submit" className="primary" style={{ width: '100%' }} disabled={submitting}>
+        {submitting ? 'Logging...' : 'Log Meal'}
       </button>
     </form>
   );

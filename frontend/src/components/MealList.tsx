@@ -1,7 +1,9 @@
 import type { Meal } from '../types';
+import { updateMeal, deleteMeal } from '../api';
 
 interface Props {
   meals: Meal[];
+  onMutated: () => void;
 }
 
 function MealCard({
@@ -68,13 +70,32 @@ function MealCard({
   );
 }
 
-export default function MealList({ meals }: Props) {
-  const handleUpdate = (mealId: string, field: string, value: number) => {
-    console.log('Update meal', mealId, field, value);
+export default function MealList({ meals, onMutated }: Props) {
+  const handleUpdate = async (mealId: string, field: string, value: number) => {
+    const meal = meals.find((m) => m.meal_id === mealId);
+    if (!meal) return;
+    const macros = {
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      sugar: meal.sugar,
+      [field]: value,
+    };
+    try {
+      await updateMeal(mealId, macros);
+      onMutated();
+    } catch {
+      // silently ignore — field keeps its value
+    }
   };
 
-  const handleDelete = (mealId: string) => {
-    console.log('Delete meal', mealId);
+  const handleDelete = async (mealId: string) => {
+    try {
+      await deleteMeal(mealId);
+      onMutated();
+    } catch {
+      // silently ignore
+    }
   };
 
   if (meals.length === 0) {

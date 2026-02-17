@@ -10,6 +10,7 @@ python = "^3.12"
 fastapi = "^0.115"
 uvicorn = { version = "^0.34", extras = ["standard"] }
 python-multipart = "^0.0.22"
+sqlalchemy = "^2.0"
 
 [build-system]
 requires = ["poetry-core"]

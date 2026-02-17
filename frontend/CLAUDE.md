@@ -14,14 +14,17 @@ pnpm build      # production build -> dist/
 ```
 frontend/
   src/
-    main.tsx                         — Entry point, wraps App in BrowserRouter
+    main.tsx                         — Entry point, wraps App in BrowserRouter + UserProvider
     App.tsx                          — Routes: / -> /daily, /daily, /weekly, /account
     App.css                          — Layout, .card, .date-nav, .header nav, .meal-cards classes
     index.css                        — Design tokens (CSS custom properties), base element styles
     types.ts                         — Shared TS interfaces (User, Meal, MacroTotals, DailyData, DayEntry, WeeklyData, Goals)
+    api.ts                           — Centralized fetch wrappers for all /api/* endpoints
+    context/
+      UserContext.tsx                 — UserProvider + useUser() hook, persists selected user to localStorage
     components/
       Header.tsx                     — Nav bar: brand + NavLinks (Daily/Weekly/Account) + UserSelector
-      UserSelector.tsx               — User dropdown (hardcoded placeholder users)
+      UserSelector.tsx               — User dropdown (driven by UserContext)
       CalorieRingChart.tsx           — Custom SVG radial chart (calorie ring + 3 macro rings)
       DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
       MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
@@ -99,8 +102,19 @@ Uses react-router-dom with 3 routes:
 - Minimal inline styles — only for layout (flex, gap, margin) not theming
 - `CalorieRingChart` is pure SVG (no charting library) for full control over ring rendering
 - All pages use hardcoded sample data as placeholders
-- UserSelector uses local component state (will lift to React context when wiring API)
+- `useUser()` hook provides `{ users, selectedUser, selectUser, refreshUsers }` — use it in any component that needs the current user
+- Selected user ID is persisted to localStorage under key `brotein_user_id`
+- All API calls go through `api.ts` — never call `fetch()` directly in components
 
 ## Current Status
 
-All views render with **hardcoded sample data**. No API calls yet. Next step: wire components to real backend endpoints and lift user state to context/global.
+All pages are wired to real API endpoints via `api.ts` and `useUser()` hook. No hardcoded sample data remains.
+
+### Callback Patterns
+
+- `DailyPage` passes `onMealCreated` to `MealEntryForm` and `onMutated` to `MealList` — both trigger a re-fetch of daily data
+- `MealEntryForm` accepts `userId` and `onMealCreated` props; shows loading state while submitting
+- `MealList` accepts `onMutated` prop; calls `updateMeal` (with all four macro fields) on blur and `deleteMeal` on delete
+- `WeeklyPage` fetches weekly data when selectedUser changes
+- `AccountPage` fetches goals per user, creates users via `createUser` + `refreshUsers`, saves goals via `saveGoals`
+- `GoalForm` receives `key={selectedUser.id}` to reset internal state on user switch

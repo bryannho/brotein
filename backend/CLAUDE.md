@@ -14,7 +14,8 @@ poetry run uvicorn app.main:app --reload --port 8000  # dev server
 backend/
   app/
     main.py          — FastAPI entry point, lifespan (init_db), router includes, SPA static serving
-    database.py      — SQLite init_db() + get_connection() context manager
+    database.py      — SQLAlchemy engine, SessionLocal, Base, init_db(), get_db() dependency
+    db_models.py     — SQLAlchemy ORM models (User, Meal, Goal)
     models.py        — Pydantic request/response models
     routes/
       __init__.py
@@ -26,6 +27,16 @@ backend/
   pyproject.toml
   brotein.db         — SQLite database (created on first startup)
 ```
+
+## SQLAlchemy Setup
+
+- **Engine**: SQLite via `create_engine("sqlite:///...brotein.db")` with `check_same_thread=False`
+- **SessionLocal**: `sessionmaker(bind=engine)` — creates DB sessions
+- **Base**: `DeclarativeBase` subclass — all ORM models inherit from this
+- **get_db()**: FastAPI dependency (generator) that yields a session and closes it after the request
+- **init_db()**: Called in FastAPI lifespan; imports `db_models` and runs `Base.metadata.create_all()`
+
+ORM models live in `db_models.py` (separate from Pydantic `models.py`).
 
 ## API Endpoints
 
@@ -52,8 +63,8 @@ Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup v
 
 ## Key Dependencies
 
-- fastapi, uvicorn, python-multipart
+- fastapi, uvicorn, python-multipart, sqlalchemy
 
 ## Current Status
 
-All endpoints return **stub/hardcoded responses**. Database tables are created but not yet read/written by routes. Next step: wire routes to actual DB queries and OpenAI integration.
+All endpoints are wired to SQLite via SQLAlchemy ORM. CRUD operations work for users, meals, goals, daily summaries, and weekly reports. OpenAI integration for meal macro extraction is not yet implemented.

@@ -127,3 +127,27 @@ All pages are wired to real API endpoints via `api.ts` and `useUser()` hook. No 
 - `WeeklyPage` fetches weekly data when selectedUser changes
 - `AccountPage` fetches goals per user, creates users via `createUser` + `refreshUsers`, saves goals via `saveGoals`
 - `GoalForm` receives `key={selectedUser.id}` to reset internal state on user switch
+
+## Claude Code Hooks
+
+A PostToolUse hook auto-runs linting and formatting after Claude edits frontend files:
+
+- `pnpm lint --fix` — ESLint auto-fix
+- `pnpm format` — Prettier auto-fix
+
+Config: `.claude/settings.json` | Script: `.claude/hooks/lint-format.sh`
+
+## Documentation Policy
+
+When making changes to the frontend, update this file to reflect those changes. This includes:
+
+- **File structure changes**: Adding, removing, or renaming components, pages, or modules
+- **New components or pages**: Add to the File Structure section with a brief description
+- **Routing changes**: New routes, changed paths, or navigation flow updates
+- **Design system changes**: New CSS custom properties, reusable classes, or design tokens
+- **API integration changes**: New fetch wrappers in `api.ts`, changed request/response shapes
+- **State management changes**: New context providers, hooks, or data flow patterns
+- **Key dependency additions/removals**: New libraries or removed packages
+- **Convention changes**: New coding patterns, styling approaches, or architectural decisions
+
+Do NOT update this file for trivial bug fixes, minor styling tweaks, or changes that don't affect how a developer understands or works with the frontend.

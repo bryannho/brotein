@@ -92,3 +92,26 @@ Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup v
 ## Current Status
 
 All endpoints are wired to SQLite via SQLAlchemy ORM. CRUD operations work for users, meals, goals, daily summaries, and weekly reports. OpenAI integration is implemented: `POST /api/meal` calls the OpenAI API to extract macro nutrients from meal text and/or images.
+
+## Claude Code Hooks
+
+A PostToolUse hook auto-runs linting and formatting after Claude edits Python files in `backend/`:
+
+- `poetry run ruff check --fix <file>` — lint + auto-fix
+- `poetry run ruff format <file>` — format
+
+Config: `.claude/settings.json` | Script: `.claude/hooks/lint-format.sh`
+
+## Documentation Policy
+
+When making changes to the backend, update this file to reflect those changes. This includes:
+
+- **File structure changes**: Adding, removing, or renaming modules or route files
+- **API endpoint changes**: New endpoints, changed request/response schemas, removed routes (update API Endpoints table)
+- **Database schema changes**: New tables, column additions/removals, relationship changes
+- **OpenAI integration changes**: Model changes, prompt updates, retry logic modifications
+- **New services or modules**: Add to File Structure with a brief description
+- **Key dependency additions/removals**: New libraries or removed packages
+- **Convention changes**: New patterns, middleware, error handling approaches
+
+Do NOT update this file for trivial bug fixes, minor refactors, or changes that don't affect how a developer understands or works with the backend.

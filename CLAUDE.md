@@ -627,4 +627,22 @@ No S3, no disk storage, no thumbnails.
     - switch SQLite → Postgres
     - add real auth later if needed
 
+---
+
+## Documentation Policy
+
+When making changes that affect the project, update the relevant CLAUDE.md file(s) to reflect those changes. This includes:
+
+- **Architectural changes**: New packages, services, infrastructure, or major dependency additions/removals
+- **File structure changes**: Adding, removing, or renaming files/directories (update Project File Structure)
+- **API changes**: Adding, modifying, or removing endpoints (update API Endpoints sections)
+- **Database changes**: Schema modifications, new tables, column changes
+- **Build/dev workflow changes**: New commands, changed tooling, updated Docker config
+- **New patterns or conventions**: Coding standards, naming conventions, state management approaches
+- **Environment changes**: New env vars, changed defaults, new external service integrations
+
+Update the root `CLAUDE.md` for cross-cutting or architectural changes. Update `frontend/CLAUDE.md` or `backend/CLAUDE.md` for package-specific changes.
+
+Do NOT update CLAUDE.md for trivial bug fixes, minor edits, or changes that don't affect how a developer understands or works with the codebase.
+
 

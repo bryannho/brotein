@@ -34,6 +34,16 @@ pnpm dev        # dev server (:5173, proxies /api → :8000)
 pnpm build      # production build → dist/
 ```
 
+### Docker
+```bash
+docker build -t brotein .
+docker run -p 8000:8000 --env-file .env brotein
+```
+- Builds frontend in a Node stage, then copies `dist/` into a Python runtime stage
+- Requires `.env` with `OPENAI_API_KEY`
+- App available at `http://localhost:8000`
+- Custom port: `docker run -p 3000:3000 -e PORT=3000 --env-file .env brotein`
+
 ## Project File Structure
 
 ```

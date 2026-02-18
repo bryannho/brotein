@@ -1,37 +1,37 @@
-import { useRef, useState } from 'react';
-import { createMeal } from '../api';
+import { useRef, useState } from 'react'
+import { createMeal } from '../api'
 
 interface Props {
-  userId: string;
-  date: string;
-  onMealCreated: () => void;
+  userId: string
+  date: string
+  onMealCreated: () => void
 }
 
 export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
-  const [text, setText] = useState('');
-  const [image, setImage] = useState<File | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [text, setText] = useState('')
+  const [image, setImage] = useState<File | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!text.trim() && !image) {
-      alert('Please provide a meal description or image.');
-      return;
+      alert('Please provide a meal description or image.')
+      return
     }
-    setSubmitting(true);
+    setSubmitting(true)
     try {
-      await createMeal(userId, date, text.trim() || undefined, image || undefined);
-      setText('');
-      setImage(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      onMealCreated();
+      await createMeal(userId, date, text.trim() || undefined, image || undefined)
+      setText('')
+      setImage(null)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      onMealCreated()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to log meal.');
+      alert(err instanceof Error ? err.message : 'Failed to log meal.')
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="card" style={{ marginBottom: '1.25rem' }}>
@@ -85,8 +85,8 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
           <button
             type="button"
             onClick={() => {
-              setImage(null);
-              if (fileInputRef.current) fileInputRef.current.value = '';
+              setImage(null)
+              if (fileInputRef.current) fileInputRef.current.value = ''
             }}
             style={{
               background: 'transparent',
@@ -113,7 +113,10 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
           }}
         >
           <div className="spinner" />
-          <span className="loading-pulse" style={{ fontSize: '0.9em', color: 'var(--color-text-secondary)' }}>
+          <span
+            className="loading-pulse"
+            style={{ fontSize: '0.9em', color: 'var(--color-text-secondary)' }}
+          >
             Analyzing meal...
           </span>
         </div>
@@ -123,5 +126,5 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
         </button>
       )}
     </form>
-  );
+  )
 }

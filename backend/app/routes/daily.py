@@ -41,6 +41,4 @@ async def get_daily(date: str, user_id: str, db: Session = Depends(get_db)):
         for m in meals
     ]
 
-    return DailyResponse(
-        date=date, user_id=user_id, totals=totals, meals=meal_responses
-    )
+    return DailyResponse(date=date, user_id=user_id, totals=totals, meals=meal_responses)

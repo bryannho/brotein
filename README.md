@@ -55,6 +55,27 @@ Set a custom port with the `PORT` env var:
 docker run -p 3000:3000 -e PORT=3000 brotein
 ```
 
+## Linting & Formatting
+
+### Frontend (Prettier + ESLint)
+
+```bash
+cd frontend
+pnpm lint           # ESLint
+pnpm format         # Prettier (auto-fix)
+pnpm format:check   # Prettier (check only)
+```
+
+### Backend (Ruff)
+
+```bash
+cd backend
+poetry run ruff check app/          # lint
+poetry run ruff check --fix app/    # lint + auto-fix
+poetry run ruff format app/         # format
+poetry run ruff format --check app/ # format (check only)
+```
+
 ## Project Structure
 
 ```

@@ -1,44 +1,44 @@
-import { useState, useEffect } from 'react';
-import type { Goals } from '../types';
-import { useUser } from '../context/UserContext';
-import { createUser, fetchGoals, saveGoals } from '../api';
-import GoalForm from '../components/GoalForm';
+import { useState, useEffect } from 'react'
+import type { Goals } from '../types'
+import { useUser } from '../context/UserContext'
+import { createUser, fetchGoals, saveGoals } from '../api'
+import GoalForm from '../components/GoalForm'
 
 export default function AccountPage() {
-  const { selectedUser, refreshUsers } = useUser();
-  const [newUserName, setNewUserName] = useState('');
-  const [goals, setGoals] = useState<Goals | null>(null);
+  const { selectedUser, refreshUsers } = useUser()
+  const [newUserName, setNewUserName] = useState('')
+  const [goals, setGoals] = useState<Goals | null>(null)
 
   useEffect(() => {
     if (!selectedUser) {
-      setGoals(null);
-      return;
+      setGoals(null)
+      return
     }
     fetchGoals(selectedUser.id)
       .then(setGoals)
-      .catch(() => setGoals(null));
-  }, [selectedUser]);
+      .catch(() => setGoals(null))
+  }, [selectedUser])
 
   const handleCreateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newUserName.trim()) return;
+    e.preventDefault()
+    if (!newUserName.trim()) return
     try {
-      await createUser(newUserName.trim());
-      setNewUserName('');
-      await refreshUsers();
+      await createUser(newUserName.trim())
+      setNewUserName('')
+      await refreshUsers()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to create user.');
+      alert(err instanceof Error ? err.message : 'Failed to create user.')
     }
-  };
+  }
 
   const handleSaveGoals = async (updated: Goals) => {
     try {
-      const saved = await saveGoals(updated);
-      setGoals(saved);
+      const saved = await saveGoals(updated)
+      setGoals(saved)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to save goals.');
+      alert(err instanceof Error ? err.message : 'Failed to save goals.')
     }
-  };
+  }
 
   return (
     <div>
@@ -57,7 +57,9 @@ export default function AccountPage() {
             onChange={(e) => setNewUserName(e.target.value)}
             style={{ flex: 1 }}
           />
-          <button type="submit" className="primary">Create</button>
+          <button type="submit" className="primary">
+            Create
+          </button>
         </form>
       </section>
 
@@ -68,5 +70,5 @@ export default function AccountPage() {
         </section>
       )}
     </div>
-  );
+  )
 }

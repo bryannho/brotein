@@ -14,6 +14,26 @@ sqlalchemy = "^2.0"
 openai = "^1.0"
 python-dotenv = "^1.0"
 
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+ignore = ["E501"]
+# E/W = pycodestyle errors/warnings  (E501 ignored — ruff format handles line length)
+# F   = pyflakes
+# I   = isort (import sorting)
+# UP  = pyupgrade (modern Python syntax)
+
+[tool.ruff.format]
+quote-style = "double"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.15.1,<0.16.0)"
+]

@@ -1,9 +1,9 @@
-import type { MacroTotals, Goals } from '../types';
-import CalorieRingChart from './CalorieRingChart';
+import type { MacroTotals, Goals } from '../types'
+import CalorieRingChart from './CalorieRingChart'
 
 interface Props {
-  totals: MacroTotals;
-  goals?: Goals;
+  totals: MacroTotals
+  goals?: Goals
 }
 
 export default function DailySummaryCard({ totals, goals }: Props) {
@@ -22,5 +22,5 @@ export default function DailySummaryCard({ totals, goals }: Props) {
         sugarGoal={goals?.sugar_goal ?? 0}
       />
     </div>
-  );
+  )
 }

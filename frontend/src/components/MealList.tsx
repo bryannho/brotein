@@ -1,30 +1,50 @@
-import { useState, useEffect } from 'react';
-import type { Meal } from '../types';
-import { updateMeal, deleteMeal } from '../api';
+import { useState, useEffect } from 'react'
+import type { Meal } from '../types'
+import { updateMeal, deleteMeal } from '../api'
 
 const MACRO_FIELDS = [
-  { key: 'calories' as const, label: 'Cal',  color: 'var(--color-calories)', tint: 'rgba(77,107,255,0.2)' },
-  { key: 'protein' as const,  label: 'Pro',  color: 'var(--color-protein)',  tint: 'rgba(78,205,196,0.2)' },
-  { key: 'carbs' as const,    label: 'Carb', color: 'var(--color-carbs)',    tint: 'rgba(255,212,59,0.2)' },
-  { key: 'fat' as const,      label: 'Fat',  color: 'var(--color-fat)',      tint: 'rgba(244,162,97,0.2)' },
-  { key: 'sugar' as const,    label: 'Sug',  color: 'var(--color-sugar)',    tint: 'rgba(255,107,107,0.2)' },
-];
+  {
+    key: 'calories' as const,
+    label: 'Cal',
+    color: 'var(--color-calories)',
+    tint: 'rgba(77,107,255,0.2)',
+  },
+  {
+    key: 'protein' as const,
+    label: 'Pro',
+    color: 'var(--color-protein)',
+    tint: 'rgba(78,205,196,0.2)',
+  },
+  {
+    key: 'carbs' as const,
+    label: 'Carb',
+    color: 'var(--color-carbs)',
+    tint: 'rgba(255,212,59,0.2)',
+  },
+  { key: 'fat' as const, label: 'Fat', color: 'var(--color-fat)', tint: 'rgba(244,162,97,0.2)' },
+  {
+    key: 'sugar' as const,
+    label: 'Sug',
+    color: 'var(--color-sugar)',
+    tint: 'rgba(255,107,107,0.2)',
+  },
+]
 
 interface Props {
-  meals: Meal[];
-  onMutated: () => void;
+  meals: Meal[]
+  onMutated: () => void
 }
 
-type MacroValues = { calories: number; protein: number; carbs: number; fat: number; sugar: number };
+type MacroValues = { calories: number; protein: number; carbs: number; fat: number; sugar: number }
 
 function MealCard({
   meal,
   onUpdate,
   onDelete,
 }: {
-  meal: Meal;
-  onUpdate: (mealId: string, macros: MacroValues) => void;
-  onDelete: (mealId: string) => void;
+  meal: Meal
+  onUpdate: (mealId: string, macros: MacroValues) => void
+  onDelete: (mealId: string) => void
 }) {
   const [localValues, setLocalValues] = useState<MacroValues>({
     calories: meal.calories,
@@ -32,7 +52,7 @@ function MealCard({
     carbs: meal.carbs,
     fat: meal.fat,
     sugar: meal.sugar,
-  });
+  })
 
   useEffect(() => {
     setLocalValues({
@@ -41,8 +61,8 @@ function MealCard({
       carbs: meal.carbs,
       fat: meal.fat,
       sugar: meal.sugar,
-    });
-  }, [meal.calories, meal.protein, meal.carbs, meal.fat, meal.sugar]);
+    })
+  }, [meal.calories, meal.protein, meal.carbs, meal.fat, meal.sugar])
 
   return (
     <div className="card">
@@ -54,9 +74,7 @@ function MealCard({
           marginBottom: '0.5rem',
         }}
       >
-        <span style={{ fontWeight: 600 }}>
-          {meal.text_input || '(no description)'}
-        </span>
+        <span style={{ fontWeight: 600 }}>{meal.text_input || '(no description)'}</span>
         <button
           onClick={() => onDelete(meal.meal_id)}
           style={{
@@ -99,54 +117,47 @@ function MealCard({
               onChange={(e) =>
                 setLocalValues((prev) => ({ ...prev, [key]: Number(e.target.value) }))
               }
-              onBlur={() =>
-                onUpdate(meal.meal_id, localValues)
-              }
+              onBlur={() => onUpdate(meal.meal_id, localValues)}
             />
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 export default function MealList({ meals, onMutated }: Props) {
   const handleUpdate = async (mealId: string, macros: MacroValues) => {
     try {
-      await updateMeal(mealId, macros);
-      onMutated();
+      await updateMeal(mealId, macros)
+      onMutated()
     } catch {
       // silently ignore — field keeps its value
     }
-  };
+  }
 
   const handleDelete = async (mealId: string) => {
     try {
-      await deleteMeal(mealId);
-      onMutated();
+      await deleteMeal(mealId)
+      onMutated()
     } catch {
       // silently ignore
     }
-  };
+  }
 
   if (meals.length === 0) {
     return (
       <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
         No meals logged yet.
       </p>
-    );
+    )
   }
 
   return (
     <div className="meal-cards">
       {meals.map((meal) => (
-        <MealCard
-          key={meal.meal_id}
-          meal={meal}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-        />
+        <MealCard key={meal.meal_id} meal={meal} onUpdate={handleUpdate} onDelete={handleDelete} />
       ))}
     </div>
-  );
+  )
 }

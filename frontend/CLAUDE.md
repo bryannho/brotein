@@ -9,6 +9,14 @@ pnpm dev        # dev server (:5173, proxies /api -> :8000)
 pnpm build      # production build -> dist/
 ```
 
+### Linting & Formatting
+
+```bash
+pnpm lint           # ESLint
+pnpm format         # Prettier (auto-fix)
+pnpm format:check   # Prettier (check only)
+```
+
 ## File Structure
 
 ```

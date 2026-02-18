@@ -8,6 +8,15 @@ poetry install                                        # install deps
 poetry run uvicorn app.main:app --reload --port 8000  # dev server
 ```
 
+### Linting & Formatting
+
+```bash
+poetry run ruff check app/          # lint
+poetry run ruff check --fix app/    # lint + auto-fix
+poetry run ruff format app/         # format
+poetry run ruff format --check app/ # format (check only)
+```
+
 ## File Structure
 
 ```
@@ -78,6 +87,7 @@ Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup v
 ## Key Dependencies
 
 - fastapi, uvicorn, python-multipart, sqlalchemy, openai, python-dotenv
+- ruff (dev — linting & formatting)
 
 ## Current Status
 

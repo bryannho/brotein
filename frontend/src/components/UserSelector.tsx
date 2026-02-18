@@ -1,10 +1,10 @@
-import { useUser } from '../context/UserContext';
+import { useUser } from '../context/UserContext'
 
 export default function UserSelector() {
-  const { users, selectedUser, selectUser } = useUser();
+  const { users, selectedUser, selectUser } = useUser()
 
   if (users.length === 0) {
-    return <span style={{ fontSize: '0.9em', color: 'var(--color-text-secondary)' }}>No users</span>;
+    return <span style={{ fontSize: '0.9em', color: 'var(--color-text-secondary)' }}>No users</span>
   }
 
   return (
@@ -19,5 +19,5 @@ export default function UserSelector() {
         </option>
       ))}
     </select>
-  );
+  )
 }

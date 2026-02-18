@@ -31,11 +31,7 @@ async def get_weekly(user_id: str, db: Session = Depends(get_db)):
 
     days = []
     for d in dates:
-        meals = (
-            db.query(Meal)
-            .filter(Meal.user_id == user_id, Meal.meal_date == d)
-            .all()
-        )
+        meals = db.query(Meal).filter(Meal.user_id == user_id, Meal.meal_date == d).all()
         actual = MacroTotals(
             calories=sum(m.calories for m in meals),
             protein=sum(m.protein for m in meals),

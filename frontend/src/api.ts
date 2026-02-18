@@ -1,16 +1,16 @@
-import type { User, DailyData, WeeklyData, Goals, Meal } from './types';
+import type { User, DailyData, WeeklyData, Goals, Meal } from './types'
 
 async function fetchJSON<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, init);
+  const res = await fetch(url, init)
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || res.statusText);
+    const text = await res.text()
+    throw new Error(text || res.statusText)
   }
-  return res.json();
+  return res.json()
 }
 
 export function fetchUsers(): Promise<User[]> {
-  return fetchJSON('/api/users');
+  return fetchJSON('/api/users')
 }
 
 export function createUser(name: string): Promise<User> {
@@ -18,38 +18,46 @@ export function createUser(name: string): Promise<User> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name }),
-  });
+  })
 }
 
 export function fetchDaily(date: string, userId: string): Promise<DailyData> {
-  return fetchJSON(`/api/daily/${date}?user_id=${userId}`);
+  return fetchJSON(`/api/daily/${date}?user_id=${userId}`)
 }
 
-export function createMeal(userId: string, date: string, text?: string, image?: File): Promise<Meal> {
-  const form = new FormData();
-  form.append('user_id', userId);
-  form.append('meal_date', date);
-  if (text) form.append('text', text);
-  if (image) form.append('image', image);
-  return fetchJSON('/api/meal', { method: 'POST', body: form });
+export function createMeal(
+  userId: string,
+  date: string,
+  text?: string,
+  image?: File,
+): Promise<Meal> {
+  const form = new FormData()
+  form.append('user_id', userId)
+  form.append('meal_date', date)
+  if (text) form.append('text', text)
+  if (image) form.append('image', image)
+  return fetchJSON('/api/meal', { method: 'POST', body: form })
 }
 
-export function updateMeal(mealId: string, macros: { calories: number; protein: number; carbs: number; fat: number; sugar: number }): Promise<Meal> {
+export function updateMeal(
+  mealId: string,
+  macros: { calories: number; protein: number; carbs: number; fat: number; sugar: number },
+): Promise<Meal> {
   return fetchJSON(`/api/meal/${mealId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(macros),
-  });
+  })
 }
 
 export function deleteMeal(mealId: string): Promise<void> {
   return fetch(`/api/meal/${mealId}`, { method: 'DELETE' }).then((r) => {
-    if (!r.ok) throw new Error(r.statusText);
-  });
+    if (!r.ok) throw new Error(r.statusText)
+  })
 }
 
 export function fetchGoals(userId: string): Promise<Goals> {
-  return fetchJSON(`/api/goals?user_id=${userId}`);
+  return fetchJSON(`/api/goals?user_id=${userId}`)
 }
 
 export function saveGoals(goals: Goals): Promise<Goals> {
@@ -57,9 +65,9 @@ export function saveGoals(goals: Goals): Promise<Goals> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(goals),
-  });
+  })
 }
 
 export function fetchWeekly(userId: string): Promise<WeeklyData> {
-  return fetchJSON(`/api/weekly?user_id=${userId}`);
+  return fetchJSON(`/api/weekly?user_id=${userId}`)
 }

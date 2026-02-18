@@ -115,9 +115,7 @@ class ExtractionResult:
     description: str = ""
 
 
-def _build_messages(
-    text: str | None, image_bytes: bytes | None
-) -> list[dict]:
+def _build_messages(text: str | None, image_bytes: bytes | None) -> list[dict]:
     """Build the messages array for the OpenAI chat completion request."""
     messages: list[dict] = [
         {"role": "system", "content": _SYSTEM_PROMPT},
@@ -143,14 +141,14 @@ def _build_messages(
     return messages
 
 
-async def _call_openai(
-    text: str | None, image_bytes: bytes | None
-) -> ExtractionResult:
+async def _call_openai(text: str | None, image_bytes: bytes | None) -> ExtractionResult:
     """Call the OpenAI API and parse the structured JSON response."""
     client = AsyncOpenAI()
     messages = _build_messages(text, image_bytes)
 
-    logger.info("Calling OpenAI gpt-4o (text=%s, has_image=%s)", repr(text), image_bytes is not None)
+    logger.info(
+        "Calling OpenAI gpt-4o (text=%s, has_image=%s)", repr(text), image_bytes is not None
+    )
 
     response = await client.chat.completions.create(
         model="gpt-4o",
@@ -178,14 +176,19 @@ async def _call_openai(
         error=str(data.get("error", "")),
         description=str(data.get("description", "")),
     )
-    logger.info("Parsed result: calories=%d protein=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
-                result.calories, result.protein, result.carbs, result.fat, result.sugar, result.error)
+    logger.info(
+        "Parsed result: calories=%d protein=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
+        result.calories,
+        result.protein,
+        result.carbs,
+        result.fat,
+        result.sugar,
+        result.error,
+    )
     return result
 
 
-async def extract_macros(
-    text: str | None, image_bytes: bytes | None
-) -> ExtractionResult:
+async def extract_macros(text: str | None, image_bytes: bytes | None) -> ExtractionResult:
     """Extract macro nutrients from meal text and/or image.
 
     Calls the OpenAI API with up to 2 retries when the model returns
@@ -223,7 +226,11 @@ async def extract_macros(
             logger.exception("Exception on attempt %d: %s", attempt + 1, exc)
 
     # All attempts exhausted
-    logger.error("All %d attempts exhausted, returning zeros. Last error: %s", _MAX_RETRIES + 1, last_error)
+    logger.error(
+        "All %d attempts exhausted, returning zeros. Last error: %s",
+        _MAX_RETRIES + 1,
+        last_error,
+    )
     return ExtractionResult(
         calories=0,
         protein=0.0,

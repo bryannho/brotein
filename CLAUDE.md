@@ -24,6 +24,9 @@ Monorepo with two packages:
 cd backend
 poetry install                                    # install deps
 poetry run uvicorn app.main:app --reload --port 8000  # dev server
+poetry run ruff check app/                        # lint
+poetry run ruff check --fix app/                  # lint + auto-fix
+poetry run ruff format app/                       # format
 ```
 
 ### Frontend
@@ -32,6 +35,8 @@ cd frontend
 pnpm install    # install deps
 pnpm dev        # dev server (:5173, proxies /api → :8000)
 pnpm build      # production build → dist/
+pnpm lint       # ESLint
+pnpm format     # Prettier (auto-fix)
 ```
 
 ### Docker

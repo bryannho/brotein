@@ -51,12 +51,24 @@ async def create_meal(
         parsed_date = date.today()
 
     image_bytes = await image.read() if image else None
-    logger.info("create_meal: user_id=%s text=%s has_image=%s date=%s",
-                user_id, repr(text), image_bytes is not None, parsed_date)
+    logger.info(
+        "create_meal: user_id=%s text=%s has_image=%s date=%s",
+        user_id,
+        repr(text),
+        image_bytes is not None,
+        parsed_date,
+    )
 
     result = await extract_macros(text, image_bytes)
-    logger.info("create_meal: extraction result — cal=%d pro=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
-                result.calories, result.protein, result.carbs, result.fat, result.sugar, result.error)
+    logger.info(
+        "create_meal: extraction result — cal=%d pro=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
+        result.calories,
+        result.protein,
+        result.carbs,
+        result.fat,
+        result.sugar,
+        result.error,
+    )
 
     meal_description = result.description if result.description else (text or None)
 
@@ -80,9 +92,7 @@ async def create_meal(
 
 
 @router.put("/meal/{meal_id}", response_model=MealResponse)
-async def update_meal(
-    meal_id: str, body: MealUpdate, db: Session = Depends(get_db)
-):
+async def update_meal(meal_id: str, body: MealUpdate, db: Session = Depends(get_db)):
     meal = db.query(Meal).filter(Meal.id == meal_id).first()
     if not meal:
         raise HTTPException(status_code=404, detail="Meal not found")

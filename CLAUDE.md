@@ -152,11 +152,11 @@ Track meals for a specific day and see daily totals.
 
 ### Purpose
 
-Show progress vs goals across the last 7 days.
+Show progress vs goals across recent days with logged meals.
 
 ### Features
 
-- Displays the last 7 days of totals for the selected user
+- Displays up to the last 7 days that have logged meals for the selected user (not necessarily a continuous 7-day calendar window)
 - Shows **goals vs actual** per day
 
 ### Graphs
@@ -428,7 +428,7 @@ Returns all meals + totals for that day.
 
 ### GET `/api/weekly?user_id=...`
 
-Returns last 7 days goals vs actual totals.
+Returns up to the last 7 days that have logged meals, with goals vs actual totals (not necessarily a continuous 7-day calendar window).
 
 **Response**
 

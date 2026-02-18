@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.db_models import Meal
+from app.db_models import Meal, User
 from app.models import MealResponse, MealUpdate
 from app.openai_service import extract_macros
 
@@ -41,6 +41,9 @@ async def create_meal(
 ):
     if not text and not image:
         raise HTTPException(status_code=400, detail="Must provide text or image")
+
+    if not db.query(User).filter(User.id == user_id).first():
+        raise HTTPException(status_code=404, detail="User not found")
 
     if meal_date:
         parsed_date = date.fromisoformat(meal_date)

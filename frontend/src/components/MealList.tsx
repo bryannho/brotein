@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { Meal } from '../types';
 import { updateMeal, deleteMeal } from '../api';
 
@@ -14,15 +15,35 @@ interface Props {
   onMutated: () => void;
 }
 
+type MacroValues = { calories: number; protein: number; carbs: number; fat: number; sugar: number };
+
 function MealCard({
   meal,
   onUpdate,
   onDelete,
 }: {
   meal: Meal;
-  onUpdate: (mealId: string, field: string, value: number) => void;
+  onUpdate: (mealId: string, macros: MacroValues) => void;
   onDelete: (mealId: string) => void;
 }) {
+  const [localValues, setLocalValues] = useState<MacroValues>({
+    calories: meal.calories,
+    protein: meal.protein,
+    carbs: meal.carbs,
+    fat: meal.fat,
+    sugar: meal.sugar,
+  });
+
+  useEffect(() => {
+    setLocalValues({
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fat: meal.fat,
+      sugar: meal.sugar,
+    });
+  }, [meal.calories, meal.protein, meal.carbs, meal.fat, meal.sugar]);
+
   return (
     <div className="card">
       <div
@@ -74,9 +95,12 @@ function MealCard({
                 textAlign: 'center',
                 borderColor: tint,
               }}
-              defaultValue={meal[key]}
-              onBlur={(e) =>
-                onUpdate(meal.meal_id, key, Number(e.target.value))
+              value={localValues[key]}
+              onChange={(e) =>
+                setLocalValues((prev) => ({ ...prev, [key]: Number(e.target.value) }))
+              }
+              onBlur={() =>
+                onUpdate(meal.meal_id, localValues)
               }
             />
           </div>
@@ -87,17 +111,7 @@ function MealCard({
 }
 
 export default function MealList({ meals, onMutated }: Props) {
-  const handleUpdate = async (mealId: string, field: string, value: number) => {
-    const meal = meals.find((m) => m.meal_id === mealId);
-    if (!meal) return;
-    const macros = {
-      calories: meal.calories,
-      protein: meal.protein,
-      carbs: meal.carbs,
-      fat: meal.fat,
-      sugar: meal.sugar,
-      [field]: value,
-    };
+  const handleUpdate = async (mealId: string, macros: MacroValues) => {
     try {
       await updateMeal(mealId, macros);
       onMutated();

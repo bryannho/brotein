@@ -102,9 +102,26 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
           </button>
         </div>
       )}
-      <button type="submit" className="primary" style={{ width: '100%' }} disabled={submitting}>
-        {submitting ? 'Logging...' : 'Log Meal'}
-      </button>
+      {submitting ? (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.75rem',
+            padding: '0.75rem 0',
+          }}
+        >
+          <div className="spinner" />
+          <span className="loading-pulse" style={{ fontSize: '0.9em', color: 'var(--color-text-secondary)' }}>
+            Analyzing meal...
+          </span>
+        </div>
+      ) : (
+        <button type="submit" className="primary" style={{ width: '100%' }}>
+          Log Meal
+        </button>
+      )}
     </form>
   );
 }

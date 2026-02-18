@@ -65,9 +65,12 @@ Three tables: `users`, `meals`, `goals`. Created by `init_db()` on app startup v
 ## OpenAI Integration (`openai_service.py`)
 
 - **Public API**: `extract_macros(text: str | None, image_bytes: bytes | None) -> ExtractionResult`
-  - `ExtractionResult` is a dataclass with fields: `calories` (int), `protein` (float), `carbs` (float), `fat` (float), `sugar` (float), `error` (str)
+  - `ExtractionResult` is a dataclass with fields: `calories` (int), `protein` (float), `carbs` (float), `fat` (float), `sugar` (float), `error` (str), `description` (str)
 - **Requires** `OPENAI_API_KEY` env var (loaded from `.env` at project root `/bigger/.env` via `python-dotenv`)
 - **Model**: `gpt-4o` (supports both text and image inputs)
+- **Structured outputs**: Uses `response_format` with a JSON schema (`strict: True`) to guarantee valid JSON. Schema includes `calories`, `protein`, `carbs`, `fat`, `sugar`, `description`, `reasoning`, and `error` fields. No markdown fence stripping needed.
+- **Chain-of-thought**: The user prompt instructs the model to break meals into ingredients, estimate per-ingredient macros, then sum totals. The `reasoning` field captures this breakdown (logged but not stored in DB).
+- **Few-shot examples**: System prompt includes 5 USDA-verified examples (scrambled egg, Chipotle bowl, pepperoni pizza, whey protein, grilled salmon + broccoli) to anchor estimates.
 - **Retry behavior**: Makes an initial attempt plus up to 2 retries when the OpenAI response contains a non-empty `error` field
 - **Failure mode**: On total failure (exceptions or all retries exhausted), returns zeros for all macro fields with an error message
 - **Image handling**: Images are base64-encoded in memory and sent as `image_url` content parts; no persistent image storage

@@ -14,10 +14,36 @@ logger = logging.getLogger(__name__)
 _project_root = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_project_root / ".env")
 
-_SYSTEM_PROMPT = (
-    "You are a nutrition extraction engine. Your job is to extract calories "
-    "and macro nutrients from meal descriptions and nutrition label images."
-)
+_SYSTEM_PROMPT = """\
+You are a nutrition extraction engine. Your job is to extract calories \
+and macro nutrients from meal descriptions and nutrition label images.
+
+Here are reference examples showing how to break down meals and estimate macros:
+
+Example 1 — Single whole food:
+Input: "1 large egg, scrambled"
+Reasoning: 1 large scrambled egg (~50g): 91 cal, 6.3g protein, 0.6g carbs, 6.7g fat, 0.6g sugar.
+Output: {"calories": 91, "protein": 6.3, "carbs": 0.6, "fat": 6.7, "sugar": 0.6}
+
+Example 2 — Restaurant meal:
+Input: "Chipotle chicken burrito bowl with white rice, black beans, fajita veggies, tomato salsa, cheese, sour cream"
+Reasoning: White rice (4oz): 170 cal, 3g P, 37g C, 0.5g F, 0g S. Black beans (4oz): 120 cal, 7g P, 22g C, 0.5g F, 0g S. Chicken (4oz): 180 cal, 32g P, 0g C, 4g F, 0g S. Fajita veggies (2.5oz): 20 cal, 1g P, 4g C, 0g F, 2g S. Tomato salsa (4oz): 25 cal, 1g P, 4g C, 0g F, 3g S. Cheese (1oz): 110 cal, 7g P, 1g C, 9g F, 0g S. Sour cream (2oz): 60 cal, 1g P, 1g C, 5g F, 1g S. Total: 685 cal, 52g P, 69g C, 19g F, 6g S.
+Output: {"calories": 685, "protein": 52.0, "carbs": 69.0, "fat": 19.0, "sugar": 6.0}
+
+Example 3 — Common food:
+Input: "2 slices pepperoni pizza"
+Reasoning: 1 slice pepperoni pizza (~107g, 14" regular crust): 298 cal, 13g P, 34g C, 12g F, 4g S. 2 slices: 596 cal, 26g P, 68g C, 24g F, 8g S.
+Output: {"calories": 596, "protein": 26.0, "carbs": 68.0, "fat": 24.0, "sugar": 8.0}
+
+Example 4 — Packaged supplement:
+Input: "1 scoop whey protein powder mixed with water"
+Reasoning: 1 scoop whey protein (~31g serving): 120 cal, 24g P, 3g C, 1.5g F, 1g S. Water adds nothing.
+Output: {"calories": 120, "protein": 24.0, "carbs": 3.0, "fat": 1.5, "sugar": 1.0}
+
+Example 5 — Home-cooked with measured portions:
+Input: "6oz grilled salmon with 1 cup steamed broccoli"
+Reasoning: 6oz grilled Atlantic salmon: 311 cal, 34g P, 0g C, 18.5g F, 0g S. 1 cup steamed broccoli (~156g): 55 cal, 3.7g P, 11g C, 0.6g F, 2.2g S. Total: 366 cal, 37.7g P, 11g C, 19.1g F, 2.2g S.
+Output: {"calories": 366, "protein": 37.7, "carbs": 11.0, "fat": 19.1, "sugar": 2.2}"""
 
 _USER_PROMPT = """\
 Extract nutritional information from the provided input.
@@ -27,22 +53,53 @@ You may receive:
 - an image (nutrition label, meal photo, screenshot),
 - or both.
 
-Return ONLY valid JSON with the following keys:
-- calories (int)
-- protein (float, grams)
-- carbs (float, grams)
-- fat (float, grams)
-- sugar (float, grams)
-- description (string)
-- error (string)
+Before calculating final values, think step by step:
+1. Break the meal into individual ingredients with estimated portions
+2. Estimate macros for each ingredient separately
+3. Sum all ingredients for final totals
+
+Put your step-by-step breakdown in the "reasoning" field.
 
 Rules:
 - If all values are confidently determined, set error to "".
-- For meal descriptions (e.g. "chipotle chicken bowl"), estimate the macros based on typical nutritional data for that food. This is expected and not guessing.
+- For meal descriptions (e.g. "chipotle chicken bowl"), estimate the macros \
+based on typical nutritional data for that food. This is expected and not guessing.
 - If a meal text description was provided by the user, set description to that exact text.
-- If only an image was provided with no text description, generate a brief, natural meal description (e.g. "Grilled chicken breast with steamed broccoli and brown rice").
-- If the input is truly ambiguous or unrelated to food, set error to a descriptive message.
-- JSON only. No extra text."""
+- If only an image was provided with no text description, generate a brief, \
+natural meal description (e.g. "Grilled chicken breast with steamed broccoli and brown rice").
+- If the input is truly ambiguous or unrelated to food, set error to a descriptive message."""
+
+_RESPONSE_FORMAT = {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "nutrition_extraction",
+        "strict": True,
+        "schema": {
+            "type": "object",
+            "properties": {
+                "calories": {"type": "integer"},
+                "protein": {"type": "number"},
+                "carbs": {"type": "number"},
+                "fat": {"type": "number"},
+                "sugar": {"type": "number"},
+                "description": {"type": "string"},
+                "reasoning": {"type": "string"},
+                "error": {"type": "string"},
+            },
+            "required": [
+                "calories",
+                "protein",
+                "carbs",
+                "fat",
+                "sugar",
+                "description",
+                "reasoning",
+                "error",
+            ],
+            "additionalProperties": False,
+        },
+    },
+}
 
 _MAX_RETRIES = 2
 
@@ -99,22 +156,18 @@ async def _call_openai(
         model="gpt-4o",
         messages=messages,
         temperature=0,
+        response_format=_RESPONSE_FORMAT,
     )
 
     raw = response.choices[0].message.content or ""
     logger.info("OpenAI raw response: %s", raw)
 
-    # Strip markdown code fences if present
-    stripped = raw.strip()
-    if stripped.startswith("```"):
-        # Remove opening fence (possibly ```json)
-        first_newline = stripped.index("\n")
-        stripped = stripped[first_newline + 1 :]
-        # Remove closing fence
-        if stripped.endswith("```"):
-            stripped = stripped[: -3].strip()
+    data = json.loads(raw)
 
-    data = json.loads(stripped)
+    # Log the reasoning for debugging but don't store it
+    reasoning = data.get("reasoning", "")
+    if reasoning:
+        logger.info("Model reasoning: %s", reasoning)
 
     result = ExtractionResult(
         calories=int(data.get("calories", 0)),

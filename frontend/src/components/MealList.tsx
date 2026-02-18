@@ -1,6 +1,14 @@
 import type { Meal } from '../types';
 import { updateMeal, deleteMeal } from '../api';
 
+const MACRO_FIELDS = [
+  { key: 'calories' as const, label: 'Cal',  color: 'var(--color-calories)', tint: 'rgba(77,107,255,0.2)' },
+  { key: 'protein' as const,  label: 'Pro',  color: 'var(--color-protein)',  tint: 'rgba(78,205,196,0.2)' },
+  { key: 'carbs' as const,    label: 'Carb', color: 'var(--color-carbs)',    tint: 'rgba(255,212,59,0.2)' },
+  { key: 'fat' as const,      label: 'Fat',  color: 'var(--color-fat)',      tint: 'rgba(244,162,97,0.2)' },
+  { key: 'sugar' as const,    label: 'Sug',  color: 'var(--color-sugar)',    tint: 'rgba(255,107,107,0.2)' },
+];
+
 interface Props {
   meals: Meal[];
   onMutated: () => void;
@@ -31,36 +39,44 @@ function MealCard({
         <button
           onClick={() => onDelete(meal.meal_id)}
           style={{
-            background: 'transparent',
-            border: 'none',
+            background: 'rgba(255,107,107,0.1)',
+            border: '1px solid rgba(255,107,107,0.25)',
             color: 'var(--color-danger)',
             cursor: 'pointer',
-            fontSize: '1.1em',
-            padding: '0.2em 0.4em',
+            fontSize: '1em',
+            lineHeight: 1,
+            padding: '0.15em 0.4em',
+            borderRadius: '6px',
           }}
           title="Delete meal"
         >
           &times;
         </button>
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '0.5rem',
-        }}
-      >
-        {(['calories', 'protein', 'carbs', 'fat', 'sugar'] as const).map((field) => (
-          <div key={field}>
-            <div style={{ fontSize: '0.75em', color: 'var(--color-text-secondary)', marginBottom: '0.15rem' }}>
-              {field.charAt(0).toUpperCase() + field.slice(1)}
+      <div style={{ display: 'flex', gap: '0.4rem' }}>
+        {MACRO_FIELDS.map(({ key, label, color, tint }) => (
+          <div
+            key={key}
+            style={{
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <div style={{ fontSize: '0.65em', fontWeight: 600, color, marginBottom: '0.15rem' }}>
+              {label}
             </div>
             <input
               type="number"
-              style={{ width: '100%', padding: '0.3em', fontSize: '0.9em', textAlign: 'center' }}
-              defaultValue={meal[field]}
+              style={{
+                width: '100%',
+                padding: '0.25em 0.2em',
+                fontSize: '0.85em',
+                textAlign: 'center',
+                borderColor: tint,
+              }}
+              defaultValue={meal[key]}
               onBlur={(e) =>
-                onUpdate(meal.meal_id, field, Number(e.target.value))
+                onUpdate(meal.meal_id, key, Number(e.target.value))
               }
             />
           </div>

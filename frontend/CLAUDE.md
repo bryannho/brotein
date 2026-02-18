@@ -29,7 +29,7 @@ frontend/
       DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
       MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
       MealEntryForm.tsx              — Text input + hidden file input with camera button + submit
-      WeeklyCharts.tsx               — Five separate recharts BarCharts (Calories, Protein, Carbs, Fat, Sugar) via MacroChart helper + custom tooltip
+      WeeklyCharts.tsx               — Averages card + Calories LineChart (with goal ReferenceArea) + Macros LineChart (Protein/Carbs/Fat/Sugar lines) + custom tooltip
       GoalForm.tsx                   — Goal inputs (uses type="text" + inputMode="decimal" + regex validation instead of type="number" to allow clearing) + save
     pages/
       DailyPage.tsx                  — Date nav > ring chart > meal form > meal cards
@@ -92,7 +92,7 @@ Uses react-router-dom with 3 routes:
 ## Key Dependencies
 
 - react-router-dom (client-side routing)
-- recharts (bar charts for weekly view)
+- recharts (line charts for weekly view)
 
 ## Conventions
 

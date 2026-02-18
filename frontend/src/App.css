@@ -91,7 +91,9 @@ input[type="number"] {
 
 /* Goal inputs */
 .goal-input {
-  width: 100%;
+  width: 120px;
+  flex-shrink: 0;
+  text-align: right;
 }
 
 @media (max-width: 600px) {

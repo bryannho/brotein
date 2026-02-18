@@ -33,11 +33,14 @@ Return ONLY valid JSON with the following keys:
 - carbs (float, grams)
 - fat (float, grams)
 - sugar (float, grams)
+- description (string)
 - error (string)
 
 Rules:
 - If all values are confidently determined, set error to "".
 - For meal descriptions (e.g. "chipotle chicken bowl"), estimate the macros based on typical nutritional data for that food. This is expected and not guessing.
+- If a meal text description was provided by the user, set description to that exact text.
+- If only an image was provided with no text description, generate a brief, natural meal description (e.g. "Grilled chicken breast with steamed broccoli and brown rice").
 - If the input is truly ambiguous or unrelated to food, set error to a descriptive message.
 - JSON only. No extra text."""
 
@@ -52,6 +55,7 @@ class ExtractionResult:
     fat: float
     sugar: float
     error: str
+    description: str = ""
 
 
 def _build_messages(
@@ -119,6 +123,7 @@ async def _call_openai(
         fat=float(data.get("fat", 0.0)),
         sugar=float(data.get("sugar", 0.0)),
         error=str(data.get("error", "")),
+        description=str(data.get("description", "")),
     )
     logger.info("Parsed result: calories=%d protein=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
                 result.calories, result.protein, result.carbs, result.fat, result.sugar, result.error)
@@ -144,6 +149,7 @@ async def extract_macros(
             fat=0.0,
             sugar=0.0,
             error="OPENAI_API_KEY is not set",
+            description=text or "",
         )
 
     logger.info("extract_macros called: text=%s, has_image=%s", repr(text), image_bytes is not None)
@@ -172,4 +178,5 @@ async def extract_macros(
         fat=0.0,
         sugar=0.0,
         error=last_error or "Failed to extract macros after retries",
+        description=text or "",
     )

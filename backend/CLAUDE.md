@@ -48,7 +48,7 @@ ORM models live in `db_models.py` (separate from Pydantic `models.py`).
 | PUT    | /api/meal/{meal_id}   | Edit meal macros             |
 | DELETE | /api/meal/{meal_id}   | Delete meal                  |
 | GET    | /api/daily/{date}     | Daily meals + totals         |
-| GET    | /api/weekly           | 7-day goals vs actuals       |
+| GET    | /api/weekly           | Last 7 days with meals (goals vs actuals) |
 | GET    | /api/users            | List all users               |
 | POST   | /api/users            | Create user                  |
 | GET    | /api/goals            | Get user goals               |

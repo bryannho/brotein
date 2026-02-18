@@ -1,5 +1,3 @@
-from datetime import date, timedelta
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -12,8 +10,6 @@ router = APIRouter(prefix="/api")
 
 @router.get("/weekly", response_model=WeeklyResponse)
 async def get_weekly(user_id: str, db: Session = Depends(get_db)):
-    today = date.today()
-
     goal = db.query(Goal).filter(Goal.user_id == user_id).first()
     goal_data = DayGoal(
         calories=goal.calories_goal if goal else 0,
@@ -23,9 +19,18 @@ async def get_weekly(user_id: str, db: Session = Depends(get_db)):
         sugar=goal.sugar_goal if goal else 0.0,
     )
 
+    meal_dates = (
+        db.query(Meal.meal_date)
+        .filter(Meal.user_id == user_id)
+        .group_by(Meal.meal_date)
+        .order_by(Meal.meal_date.desc())
+        .limit(7)
+        .all()
+    )
+    dates = sorted([row[0] for row in meal_dates])
+
     days = []
-    for i in range(6, -1, -1):
-        d = today - timedelta(days=i)
+    for d in dates:
         meals = (
             db.query(Meal)
             .filter(Meal.user_id == user_id, Meal.meal_date == d)

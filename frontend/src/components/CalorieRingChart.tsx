@@ -68,16 +68,31 @@ function SmallRing({
   goal: number;
   color: string;
 }) {
+  const ringSize = 70;
   const progress = goal > 0 ? value / goal : 0;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-      <Ring size={56} strokeWidth={5} progress={progress} color={color} />
       <span style={{ fontSize: '0.7em', color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {label}
       </span>
-      <span style={{ fontSize: '0.85em', fontWeight: 600 }}>
-        {Math.round(value)}
-        <span style={{ color: 'var(--color-text-secondary)', fontWeight: 400 }}> / {Math.round(goal)}g</span>
+      <div style={{ position: 'relative', width: ringSize, height: ringSize }}>
+        <Ring size={ringSize} strokeWidth={5} progress={progress} color={color} />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ fontSize: '0.95em', fontWeight: 600 }}>
+            {Math.round(value)}
+          </span>
+        </div>
+      </div>
+      <span style={{ fontSize: '0.75em', color: 'var(--color-text-secondary)' }}>
+        / {Math.round(goal)}g
       </span>
     </div>
   );

@@ -55,11 +55,13 @@ async def create_meal(
     logger.info("create_meal: extraction result — cal=%d pro=%.1f carbs=%.1f fat=%.1f sugar=%.1f error=%r",
                 result.calories, result.protein, result.carbs, result.fat, result.sugar, result.error)
 
+    meal_description = result.description if result.description else (text or None)
+
     meal = Meal(
         id=str(uuid4()),
         user_id=user_id,
         meal_date=parsed_date,
-        text_input=text,
+        text_input=meal_description,
         calories=result.calories,
         protein=result.protein,
         carbs=result.carbs,

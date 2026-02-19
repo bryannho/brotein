@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-DB_PATH = Path(__file__).resolve().parent.parent / "brotein.db"
+DB_PATH = Path(os.environ.get("DB_PATH", Path(__file__).resolve().parent.parent / "brotein.db"))
 
 
 class Base(DeclarativeBase):

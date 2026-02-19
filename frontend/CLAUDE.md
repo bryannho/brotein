@@ -24,19 +24,22 @@ frontend/
   src/
     main.tsx                         — Entry point, wraps App in BrowserRouter + UserProvider
     App.tsx                          — Routes: / -> /daily, /daily, /weekly, /account
-    App.css                          — Layout, .card, .date-nav, .header nav, .meal-cards classes
+    App.css                          — Layout, .card, .date-nav, .header nav, .meal-cards, .autocomplete-dropdown, .modal-overlay classes
     index.css                        — Design tokens (CSS custom properties), base element styles
-    types.ts                         — Shared TS interfaces (User, Meal, MacroTotals, DailyData, DayEntry, WeeklyData, Goals)
+    types.ts                         — Shared TS interfaces (User, Meal, MacroTotals, DailyData, DayEntry, WeeklyData, Goals, MealSuggestion)
     api.ts                           — Centralized fetch wrappers for all /api/* endpoints
     context/
       UserContext.tsx                 — UserProvider + useUser() hook, persists selected user to localStorage
+    hooks/
+      useDebounce.ts                 — Generic useDebounce<T>(value, delay) hook for search-as-you-type
     components/
       Header.tsx                     — Nav bar: brand + NavLinks (Daily/Weekly/Account) + UserSelector
       UserSelector.tsx               — User dropdown (driven by UserContext)
       CalorieRingChart.tsx           — Custom SVG radial chart (calorie ring + 4 macro rings)
       DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
       MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
-      MealEntryForm.tsx              — Text input + hidden file input with camera button + submit
+      MealEntryForm.tsx              — Text input + hidden file input with camera button + submit + meal memory autocomplete dropdown
+      MealMemoryModal.tsx            — Modal for editing macros before re-adding a past meal (skips OpenAI)
       WeeklyCharts.tsx               — Averages card + Calories LineChart (with goal ReferenceArea) + Macros LineChart (Protein/Carbs/Fat/Sugar lines) + custom tooltip
       GoalForm.tsx                   — Goal inputs (uses type="text" + inputMode="decimal" + regex validation instead of type="number" to allow clearing) + save
     pages/
@@ -79,6 +82,9 @@ Inter (400, 600, 700) loaded via Google Fonts in `index.html`.
 - `.date-nav` — Centered flex row for date navigation arrows
 - `.meal-cards` — Vertical flex column for meal card list
 - `.goal-input` — Full-width input for goal fields
+- `.autocomplete-dropdown` — Absolutely positioned dropdown below text input (z-index: 10)
+- `.autocomplete-item` — Individual dropdown item with hover state
+- `.modal-overlay` — Fixed full-screen overlay with centered content (z-index: 100)
 
 ### Base Element Styles (defined in `index.css`)
 
@@ -122,7 +128,7 @@ All pages are wired to real API endpoints via `api.ts` and `useUser()` hook. No 
 ### Callback Patterns
 
 - `DailyPage` passes `onMealCreated` to `MealEntryForm` and `onMutated` to `MealList` — both trigger a re-fetch of daily data
-- `MealEntryForm` accepts `userId` and `onMealCreated` props; shows loading state while submitting
+- `MealEntryForm` accepts `userId`, `date`, and `onMealCreated` props; shows loading state while submitting; includes meal memory autocomplete (debounced search → dropdown → MealMemoryModal → quickCreateMeal)
 - `MealList` accepts `onMutated` prop; calls `updateMeal` (with all five macro fields) on blur and `deleteMeal` on delete
 - `WeeklyPage` fetches weekly data when selectedUser changes
 - `AccountPage` fetches goals per user, creates users via `createUser` + `refreshUsers`, saves goals via `saveGoals`

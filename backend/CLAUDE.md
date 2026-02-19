@@ -29,7 +29,7 @@ backend/
     openai_service.py — OpenAI integration for macro extraction
     routes/
       __init__.py
-      meals.py       — POST /api/meal (with OpenAI extraction), PUT /api/meal/{id}, DELETE /api/meal/{id}
+      meals.py       — POST /api/meal (with OpenAI extraction), POST /api/meal/quick (skip OpenAI), PUT /api/meal/{id}, DELETE /api/meal/{id}, GET /api/meals/search (meal memory autocomplete)
       daily.py       — GET /api/daily/{date}?user_id=
       weekly.py      — GET /api/weekly?user_id=
       users.py       — GET /api/users, POST /api/users
@@ -53,7 +53,9 @@ ORM models live in `db_models.py` (separate from Pydantic `models.py`).
 | Method | Path                  | Description                  |
 |--------|-----------------------|------------------------------|
 | GET    | /api/health           | Health check                 |
-| POST   | /api/meal             | Create meal (multipart)      |
+| POST   | /api/meal             | Create meal (multipart, OpenAI extraction) |
+| POST   | /api/meal/quick       | Quick-create meal (skip OpenAI) |
+| GET    | /api/meals/search     | Search past meals (autocomplete) |
 | PUT    | /api/meal/{meal_id}   | Edit meal macros             |
 | DELETE | /api/meal/{meal_id}   | Delete meal                  |
 | GET    | /api/daily/{date}     | Daily meals + totals         |

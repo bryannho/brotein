@@ -3,16 +3,18 @@ from datetime import date, datetime
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.db_models import Meal, User
-from app.models import MealResponse, MealUpdate
+from app.models import MealResponse, MealSearchResult, MealUpdate, QuickMealCreate
 from app.openai_service import extract_macros
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api")
+search_router = APIRouter(prefix="/api")
 
 
 def _meal_to_response(meal: Meal, error: str = "") -> MealResponse:
@@ -29,6 +31,51 @@ def _meal_to_response(meal: Meal, error: str = "") -> MealResponse:
         error=error,
         created_at=meal.created_at.isoformat(),
     )
+
+
+@search_router.get("/meals/search", response_model=list[MealSearchResult])
+async def search_meals(user_id: str, q: str = "", db: Session = Depends(get_db)):
+    if len(q) < 2:
+        return []
+
+    # Subquery to get the max created_at per unique text_input
+    latest = (
+        db.query(
+            Meal.text_input,
+            func.max(Meal.created_at).label("max_created"),
+        )
+        .filter(
+            Meal.user_id == user_id,
+            Meal.text_input.isnot(None),
+            Meal.text_input != "",
+            Meal.text_input.ilike(f"%{q}%"),
+        )
+        .group_by(Meal.text_input)
+        .subquery()
+    )
+
+    meals = (
+        db.query(Meal)
+        .join(
+            latest,
+            (Meal.text_input == latest.c.text_input) & (Meal.created_at == latest.c.max_created),
+        )
+        .order_by(Meal.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    return [
+        MealSearchResult(
+            text_input=m.text_input,
+            calories=m.calories,
+            protein=m.protein,
+            carbs=m.carbs,
+            fat=m.fat,
+            sugar=m.sugar,
+        )
+        for m in meals
+    ]
 
 
 @router.post("/meal", response_model=MealResponse)
@@ -89,6 +136,29 @@ async def create_meal(
     db.refresh(meal)
     logger.info("create_meal: saved meal %s", meal.id)
     return _meal_to_response(meal, error=result.error)
+
+
+@router.post("/meal/quick", response_model=MealResponse)
+async def quick_create_meal(body: QuickMealCreate, db: Session = Depends(get_db)):
+    if not db.query(User).filter(User.id == body.user_id).first():
+        raise HTTPException(status_code=404, detail="User not found")
+
+    meal = Meal(
+        id=str(uuid4()),
+        user_id=body.user_id,
+        meal_date=date.fromisoformat(body.meal_date),
+        text_input=body.text_input,
+        calories=body.calories,
+        protein=body.protein,
+        carbs=body.carbs,
+        fat=body.fat,
+        sugar=body.sugar,
+        created_at=datetime.now(),
+    )
+    db.add(meal)
+    db.commit()
+    db.refresh(meal)
+    return _meal_to_response(meal)
 
 
 @router.put("/meal/{meal_id}", response_model=MealResponse)

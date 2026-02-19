@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { Meal } from '../types'
 import { updateMeal, deleteMeal } from '../api'
 
@@ -53,16 +53,6 @@ function MealCard({
     fat: meal.fat,
     sugar: meal.sugar,
   })
-
-  useEffect(() => {
-    setLocalValues({
-      calories: meal.calories,
-      protein: meal.protein,
-      carbs: meal.carbs,
-      fat: meal.fat,
-      sugar: meal.sugar,
-    })
-  }, [meal.calories, meal.protein, meal.carbs, meal.fat, meal.sugar])
 
   return (
     <div className="card">

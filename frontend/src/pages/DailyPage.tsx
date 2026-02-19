@@ -37,34 +37,38 @@ export default function DailyPage() {
   })
   const [goals, setGoals] = useState<Goals | null>(null)
 
-  const loadDaily = useCallback(async () => {
+  const loadDaily = useCallback(() => {
     if (!selectedUser) return
-    try {
-      const data = await fetchDaily(currentDate, selectedUser.id)
-      setMeals(data.meals)
-      setTotals(data.totals)
-    } catch {
-      setMeals([])
-      setTotals({ calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 })
-    }
+    fetchDaily(currentDate, selectedUser.id)
+      .then((data) => {
+        setMeals(data.meals)
+        setTotals(data.totals)
+      })
+      .catch(() => {
+        setMeals([])
+        setTotals({ calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 })
+      })
   }, [currentDate, selectedUser])
 
-  const loadGoals = useCallback(async () => {
+  useEffect(() => {
     if (!selectedUser) return
-    try {
-      setGoals(await fetchGoals(selectedUser.id))
-    } catch {
-      setGoals(null)
-    }
+    fetchDaily(currentDate, selectedUser.id)
+      .then((data) => {
+        setMeals(data.meals)
+        setTotals(data.totals)
+      })
+      .catch(() => {
+        setMeals([])
+        setTotals({ calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 })
+      })
+  }, [currentDate, selectedUser])
+
+  useEffect(() => {
+    if (!selectedUser) return
+    fetchGoals(selectedUser.id)
+      .then(setGoals)
+      .catch(() => setGoals(null))
   }, [selectedUser])
-
-  useEffect(() => {
-    loadDaily()
-  }, [loadDaily])
-
-  useEffect(() => {
-    loadGoals()
-  }, [loadGoals])
 
   if (!selectedUser) return null
 

@@ -67,7 +67,7 @@ brotein/
       models.py                        — Pydantic request/response models
       routes/
         __init__.py
-        meals.py                       — POST/PUT/DELETE /api/meal
+        meals.py                       — POST/PUT/DELETE /api/meal, POST /api/meal/quick, GET /api/meals/search
         daily.py                       — GET /api/daily/{date}
         weekly.py                      — GET /api/weekly
         users.py                       — GET/POST /api/users
@@ -86,12 +86,15 @@ brotein/
       api.ts                           — Typed fetch wrappers for all API endpoints
       context/
         UserContext.tsx                — UserProvider + useUser() hook (localStorage persistence)
+      hooks/
+        useDebounce.ts                 — Generic debounce hook for search-as-you-type
       components/
         Header.tsx                     — Nav bar + UserSelector
         UserSelector.tsx               — User dropdown (context-driven)
         DailySummaryCard.tsx           — Macro totals card
         MealList.tsx                   — Meal cards with inline editing + API calls
-        MealEntryForm.tsx              — Meal input form + API submission
+        MealEntryForm.tsx              — Meal input form + API submission + meal memory autocomplete
+        MealMemoryModal.tsx            — Editable macro modal for re-adding past meals
         WeeklyCharts.tsx               — Recharts bar charts
         GoalForm.tsx                   — Goal setting form
       pages/

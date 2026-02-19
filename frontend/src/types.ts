@@ -51,3 +51,12 @@ export interface Goals {
   fat_goal: number
   sugar_goal: number
 }
+
+export interface MealSuggestion {
+  text_input: string
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  sugar: number
+}

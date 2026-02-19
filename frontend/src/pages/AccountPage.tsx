@@ -10,10 +10,7 @@ export default function AccountPage() {
   const [goals, setGoals] = useState<Goals | null>(null)
 
   useEffect(() => {
-    if (!selectedUser) {
-      setGoals(null)
-      return
-    }
+    if (!selectedUser) return
     fetchGoals(selectedUser.id)
       .then(setGoals)
       .catch(() => setGoals(null))
@@ -63,7 +60,7 @@ export default function AccountPage() {
         </form>
       </section>
 
-      {selectedUser && goals && (
+      {selectedUser && goals && goals.user_id === selectedUser.id && (
         <section className="card">
           <h3 style={{ marginTop: 0 }}>Daily Goals</h3>
           <GoalForm key={selectedUser.id} goals={goals} onSave={handleSaveGoals} />

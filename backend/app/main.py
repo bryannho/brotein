@@ -28,6 +28,7 @@ def health():
     return {"status": "ok"}
 
 
+app.include_router(meals.search_router)
 app.include_router(meals.router)
 app.include_router(daily.router)
 app.include_router(weekly.router)

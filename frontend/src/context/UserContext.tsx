@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '../types'
 import { fetchUsers } from '../api'
@@ -20,8 +20,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.getItem(STORAGE_KEY),
   )
 
-  const loadUsers = useCallback(async () => {
-    const list = await fetchUsers()
+  const applyUsers = (list: User[]) => {
     setUsers(list)
     // If stored selection is invalid or empty, pick first user
     setSelectedId((prev) => {
@@ -32,11 +31,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
       else localStorage.removeItem(STORAGE_KEY)
       return first
     })
-  }, [])
+  }
 
   useEffect(() => {
-    loadUsers()
-  }, [loadUsers])
+    fetchUsers().then(applyUsers)
+  }, [])
 
   const selectUser = (id: string) => {
     setSelectedId(id)
@@ -46,12 +45,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const selectedUser = users.find((u) => u.id === selectedId) ?? null
 
   return (
-    <UserContext.Provider value={{ users, selectedUser, selectUser, refreshUsers: loadUsers }}>
+    <UserContext.Provider
+      value={{ users, selectedUser, selectUser, refreshUsers: () => fetchUsers().then(applyUsers) }}
+    >
       {children}
     </UserContext.Provider>
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useUser() {
   const ctx = useContext(UserContext)
   if (!ctx) throw new Error('useUser must be used within UserProvider')

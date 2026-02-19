@@ -1,4 +1,4 @@
-import type { User, DailyData, WeeklyData, Goals, Meal } from './types'
+import type { User, DailyData, WeeklyData, Goals, Meal, MealSuggestion } from './types'
 
 async function fetchJSON<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init)
@@ -70,4 +70,23 @@ export function saveGoals(goals: Goals): Promise<Goals> {
 
 export function fetchWeekly(userId: string): Promise<WeeklyData> {
   return fetchJSON(`/api/weekly?user_id=${userId}`)
+}
+
+export function searchMeals(userId: string, query: string): Promise<MealSuggestion[]> {
+  return fetchJSON(
+    `/api/meals/search?user_id=${encodeURIComponent(userId)}&q=${encodeURIComponent(query)}`,
+  )
+}
+
+export function quickCreateMeal(
+  userId: string,
+  date: string,
+  textInput: string,
+  macros: { calories: number; protein: number; carbs: number; fat: number; sugar: number },
+): Promise<Meal> {
+  return fetchJSON('/api/meal/quick', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, meal_date: date, text_input: textInput, ...macros }),
+  })
 }

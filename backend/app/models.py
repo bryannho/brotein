@@ -84,3 +84,23 @@ class GoalsResponse(BaseModel):
     fat_goal: float
     sugar_goal: float
     updated_at: str
+
+
+class MealSearchResult(BaseModel):
+    text_input: str
+    calories: int
+    protein: float
+    carbs: float
+    fat: float
+    sugar: float
+
+
+class QuickMealCreate(BaseModel):
+    user_id: str
+    meal_date: str
+    text_input: str
+    calories: int
+    protein: float
+    carbs: float
+    fat: float
+    sugar: float

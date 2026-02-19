@@ -79,6 +79,18 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
     setSelectedSuggestion(suggestion)
   }
 
+  const handleQuickAdd = () => {
+    setShowDropdown(false)
+    setSelectedSuggestion({
+      text_input: text.trim(),
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      sugar: 0,
+    })
+  }
+
   const handleModalConfirm = async (macros: {
     calories: number
     protein: number
@@ -203,9 +215,41 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
             </span>
           </div>
         ) : (
-          <button type="submit" className="primary" style={{ width: '100%' }}>
-            Log Meal
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              type="button"
+              disabled={!text.trim()}
+              onClick={handleQuickAdd}
+              style={{ flex: 1 }}
+            >
+              Quick Add
+              <span
+                style={{
+                  display: 'block',
+                  fontSize: '0.7em',
+                  fontWeight: 400,
+                  opacity: 0.7,
+                  marginTop: '0.15em',
+                }}
+              >
+                enter macros
+              </span>
+            </button>
+            <button type="submit" className="primary" style={{ flex: 1 }}>
+              Log Meal
+              <span
+                style={{
+                  display: 'block',
+                  fontSize: '0.7em',
+                  fontWeight: 400,
+                  opacity: 0.7,
+                  marginTop: '0.15em',
+                }}
+              >
+                AI-powered
+              </span>
+            </button>
+          </div>
         )}
       </form>
       {selectedSuggestion && (

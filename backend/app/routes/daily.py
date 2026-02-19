@@ -13,7 +13,7 @@ async def get_daily(date: str, user_id: str, db: Session = Depends(get_db)):
     meals = (
         db.query(Meal)
         .filter(Meal.user_id == user_id, Meal.meal_date == date)
-        .order_by(Meal.created_at)
+        .order_by(Meal.created_at.desc())
         .all()
     )
 

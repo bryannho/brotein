@@ -46,13 +46,24 @@ function MealCard({
   onUpdate: (mealId: string, macros: MacroValues) => void
   onDelete: (mealId: string) => void
 }) {
-  const [localValues, setLocalValues] = useState<MacroValues>({
-    calories: meal.calories,
-    protein: meal.protein,
-    carbs: meal.carbs,
-    fat: meal.fat,
-    sugar: meal.sugar,
+  const [localValues, setLocalValues] = useState<Record<string, string>>({
+    calories: String(meal.calories),
+    protein: String(meal.protein),
+    carbs: String(meal.carbs),
+    fat: String(meal.fat),
+    sugar: String(meal.sugar),
   })
+
+  const handleBlur = () => {
+    const macros: MacroValues = {
+      calories: Number(localValues.calories) || 0,
+      protein: Number(localValues.protein) || 0,
+      carbs: Number(localValues.carbs) || 0,
+      fat: Number(localValues.fat) || 0,
+      sugar: Number(localValues.sugar) || 0,
+    }
+    onUpdate(meal.meal_id, macros)
+  }
 
   return (
     <div className="card">
@@ -95,7 +106,8 @@ function MealCard({
               {label}
             </div>
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               style={{
                 width: '100%',
                 padding: '0.25em 0.2em',
@@ -104,10 +116,13 @@ function MealCard({
                 borderColor: tint,
               }}
               value={localValues[key]}
-              onChange={(e) =>
-                setLocalValues((prev) => ({ ...prev, [key]: Number(e.target.value) }))
-              }
-              onBlur={() => onUpdate(meal.meal_id, localValues)}
+              onChange={(e) => {
+                const v = e.target.value
+                if (v === '' || /^\d*\.?\d*$/.test(v)) {
+                  setLocalValues((prev) => ({ ...prev, [key]: v }))
+                }
+              }}
+              onBlur={handleBlur}
             />
           </div>
         ))}

@@ -16,22 +16,36 @@ function Ring({
   strokeWidth,
   progress,
   color,
-  trackColor = '#333',
+  trackColor = 'var(--color-border)',
+  glow = false,
 }: {
   size: number
   strokeWidth: number
   progress: number
   color: string
   trackColor?: string
+  glow?: boolean
 }) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const clamped = Math.min(Math.max(progress, 0), 1)
   const offset = circumference * (1 - clamped)
   const center = size / 2
+  const filterId = glow ? `glow-${size}` : undefined
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {glow && (
+        <defs>
+          <filter id={filterId}>
+            <feGaussianBlur stdDeviation="0.75" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      )}
       <circle
         cx={center}
         cy={center}
@@ -52,12 +66,13 @@ function Ring({
         strokeDashoffset={offset}
         transform={`rotate(-90 ${center} ${center})`}
         style={{ transition: 'stroke-dashoffset 0.4s ease' }}
+        filter={glow ? `url(#${filterId})` : undefined}
       />
     </svg>
   )
 }
 
-function SmallRing({
+function MacroBar({
   label,
   value,
   goal,
@@ -68,37 +83,56 @@ function SmallRing({
   goal: number
   color: string
 }) {
-  const ringSize = 70
-  const progress = goal > 0 ? value / goal : 0
+  const progress = goal > 0 ? Math.min(value / goal, 1) : 0
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-      <span
+    <div style={{ marginBottom: '0.5rem' }}>
+      <div
         style={{
-          fontSize: '0.7em',
-          color: 'var(--color-text-secondary)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+          marginBottom: '0.2rem',
         }}
       >
-        {label}
-      </span>
-      <div style={{ position: 'relative', width: ringSize, height: ringSize }}>
-        <Ring size={ringSize} strokeWidth={5} progress={progress} color={color} />
-        <div
+        <span
           style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            fontSize: '0.7em',
+            fontWeight: 600,
+            color,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
           }}
         >
-          <span style={{ fontSize: '0.95em', fontWeight: 600 }}>{Math.round(value)}</span>
-        </div>
+          {label}
+        </span>
+        <span
+          style={{
+            fontSize: '0.8em',
+            fontFamily: 'var(--font-mono)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          {Math.round(value)} / {Math.round(goal)}g
+        </span>
       </div>
-      <span style={{ fontSize: '0.75em', color: 'var(--color-text-secondary)' }}>
-        / {Math.round(goal)}g
-      </span>
+      <div
+        style={{
+          height: '6px',
+          borderRadius: '3px',
+          background: 'var(--color-border)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: `${progress * 100}%`,
+            borderRadius: '3px',
+            background: `linear-gradient(90deg, ${color}, color-mix(in srgb, ${color} 50%, transparent))`,
+            transition: 'width 0.4s ease',
+          }}
+        />
+      </div>
     </div>
   )
 }
@@ -116,26 +150,25 @@ export default function CalorieRingChart({
   sugarGoal,
 }: Props) {
   const calProgress = caloriesGoal > 0 ? calories / caloriesGoal : 0
-  const mainSize = 180
-  const mainStroke = 12
+  const ringSize = 140
 
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         gap: '1.25rem',
         padding: '0.5rem 0',
       }}
     >
-      {/* Main calorie ring */}
-      <div style={{ position: 'relative', width: mainSize, height: mainSize }}>
+      {/* Calorie ring */}
+      <div style={{ position: 'relative', width: ringSize, height: ringSize, flexShrink: 0 }}>
         <Ring
-          size={mainSize}
-          strokeWidth={mainStroke}
+          size={ringSize}
+          strokeWidth={10}
           progress={calProgress}
           color="var(--color-calories)"
+          glow
         />
         <div
           style={{
@@ -147,26 +180,35 @@ export default function CalorieRingChart({
             justifyContent: 'center',
           }}
         >
-          <span style={{ fontSize: '2rem', fontWeight: 700, lineHeight: 1.1 }}>
+          <span
+            style={{
+              fontSize: '1.6rem',
+              fontWeight: 700,
+              lineHeight: 1.1,
+              marginBottom: '0.15rem',
+              fontFamily: 'var(--font-mono)',
+            }}
+          >
             {calories.toLocaleString()}
           </span>
-          <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+          <span
+            style={{
+              fontSize: '0.7rem',
+              color: 'var(--color-text-secondary)',
+              fontFamily: 'var(--font-mono)',
+            }}
+          >
             / {caloriesGoal.toLocaleString()} cal
           </span>
         </div>
       </div>
 
-      {/* Small macro rings */}
-      <div style={{ display: 'flex', gap: '1.75rem', justifyContent: 'center' }}>
-        <SmallRing
-          label="Protein"
-          value={protein}
-          goal={proteinGoal}
-          color="var(--color-protein)"
-        />
-        <SmallRing label="Carbs" value={carbs} goal={carbsGoal} color="var(--color-carbs)" />
-        <SmallRing label="Fat" value={fat} goal={fatGoal} color="var(--color-fat)" />
-        <SmallRing label="Sugar" value={sugar} goal={sugarGoal} color="var(--color-sugar)" />
+      {/* Macro bars */}
+      <div style={{ flex: 1 }}>
+        <MacroBar label="Protein" value={protein} goal={proteinGoal} color="var(--color-protein)" />
+        <MacroBar label="Carbs" value={carbs} goal={carbsGoal} color="var(--color-carbs)" />
+        <MacroBar label="Fat" value={fat} goal={fatGoal} color="var(--color-fat)" />
+        <MacroBar label="Sugar" value={sugar} goal={sugarGoal} color="var(--color-sugar)" />
       </div>
     </div>
   )

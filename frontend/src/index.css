@@ -1,18 +1,21 @@
 :root {
-  --color-bg: #1a1a1a;
-  --color-surface: #242424;
-  --color-surface-alt: #2c2c2c;
-  --color-border: #333;
-  --color-text: #f0f0f0;
-  --color-text-secondary: #888;
-  --color-calories: #4d6bff;
-  --color-protein: #4ecdc4;
-  --color-carbs: #ffd43b;
-  --color-fat: #f4a261;
-  --color-sugar: #ff6b6b;
-  --color-danger: #ff6b6b;
+  --color-bg: #141210;
+  --color-surface: #1c1a17;
+  --color-surface-alt: #242119;
+  --color-border: #2a2722;
+  --color-text: #f0ebe4;
+  --color-text-secondary: #7a7268;
+  --color-calories: #c4885a;
+  --color-protein: #7daa92;
+  --color-carbs: #e8c468;
+  --color-fat: #d4896a;
+  --color-sugar: #cf6679;
+  --color-danger: #cf6679;
 
-  font-family: 'Inter', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  font-family: var(--font-body);
   line-height: 1.5;
   font-weight: 400;
   color: var(--color-text);

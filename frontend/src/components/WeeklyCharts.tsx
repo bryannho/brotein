@@ -118,7 +118,15 @@ export default function WeeklyCharts({ days }: Props) {
               <div style={{ fontSize: '0.75em', color: item.color, fontWeight: 600 }}>
                 {item.label}
               </div>
-              <div style={{ fontSize: '1.1em', fontWeight: 700 }}>{item.value}</div>
+              <div
+                style={{
+                  fontSize: '1.1em',
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-mono)',
+                }}
+              >
+                {item.value}
+              </div>
             </div>
           ))}
         </div>
@@ -130,26 +138,26 @@ export default function WeeklyCharts({ days }: Props) {
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={caloriesData} margin={margin}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis dataKey="date" stroke="#888" tick={{ fontSize: isMobile ? 10 : 12 }} />
-            {!isMobile && <YAxis stroke="#888" tick={{ fontSize: 12 }} />}
+            <XAxis dataKey="date" stroke="#7a7268" tick={{ fontSize: isMobile ? 10 : 12 }} />
+            {!isMobile && <YAxis stroke="#7a7268" tick={{ fontSize: 12 }} />}
             <Tooltip content={<CustomTooltip />} />
             {calorieGoal > 0 && (
-              <ReferenceArea y1={0} y2={calorieGoal} fill="rgba(77,107,255,0.12)" />
+              <ReferenceArea y1={0} y2={calorieGoal} fill="rgba(196,136,90,0.12)" />
             )}
             {calorieGoal > 0 && (
               <ReferenceLine
                 y={calorieGoal}
-                stroke="rgba(77,107,255,0.5)"
+                stroke="rgba(196,136,90,0.5)"
                 strokeDasharray="6 4"
-                label={{ value: 'Goal', position: 'right', fill: '#888', fontSize: 11 }}
+                label={{ value: 'Goal', position: 'right', fill: '#7a7268', fontSize: 11 }}
               />
             )}
             <Line
               type="monotone"
               dataKey="Calories"
-              stroke="#4d6bff"
+              stroke="#c4885a"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#4d6bff' }}
+              dot={{ r: 4, fill: '#c4885a' }}
               activeDot={{ r: 6 }}
             />
           </LineChart>
@@ -162,37 +170,37 @@ export default function WeeklyCharts({ days }: Props) {
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={macrosData} margin={margin}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis dataKey="date" stroke="#888" tick={{ fontSize: isMobile ? 10 : 12 }} />
-            {!isMobile && <YAxis stroke="#888" tick={{ fontSize: 12 }} />}
+            <XAxis dataKey="date" stroke="#7a7268" tick={{ fontSize: isMobile ? 10 : 12 }} />
+            {!isMobile && <YAxis stroke="#7a7268" tick={{ fontSize: 12 }} />}
             <Tooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={isMobile ? { fontSize: '0.75em' } : undefined} />
             <Line
               type="monotone"
               dataKey="Protein"
-              stroke="#4ecdc4"
+              stroke="#7daa92"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#4ecdc4' }}
+              dot={{ r: 4, fill: '#7daa92' }}
             />
             <Line
               type="monotone"
               dataKey="Carbs"
-              stroke="#ffd43b"
+              stroke="#e8c468"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#ffd43b' }}
+              dot={{ r: 4, fill: '#e8c468' }}
             />
             <Line
               type="monotone"
               dataKey="Fat"
-              stroke="#f4a261"
+              stroke="#d4896a"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#f4a261' }}
+              dot={{ r: 4, fill: '#d4896a' }}
             />
             <Line
               type="monotone"
               dataKey="Sugar"
-              stroke="#ff6b6b"
+              stroke="#cf6679"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#ff6b6b' }}
+              dot={{ r: 4, fill: '#cf6679' }}
             />
           </LineChart>
         </ResponsiveContainer>

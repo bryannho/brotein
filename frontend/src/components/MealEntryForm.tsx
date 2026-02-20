@@ -152,7 +152,7 @@ export default function MealEntryForm({ userId, date, onMealCreated }: Props) {
             style={{
               background: image ? 'var(--color-calories)' : 'var(--color-surface-alt)',
               borderColor: image ? 'transparent' : 'var(--color-border)',
-              color: image ? '#fff' : 'var(--color-text)',
+              color: 'var(--color-text)',
               padding: '0.5em 0.75em',
               fontSize: '1.1em',
               lineHeight: 1,

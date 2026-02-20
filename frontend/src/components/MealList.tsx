@@ -8,26 +8,31 @@ const MACRO_FIELDS = [
     key: 'calories' as const,
     label: 'Cal',
     color: 'var(--color-calories)',
-    tint: 'rgba(77,107,255,0.2)',
+    tint: 'rgba(196,136,90,0.2)',
   },
   {
     key: 'protein' as const,
     label: 'Pro',
     color: 'var(--color-protein)',
-    tint: 'rgba(78,205,196,0.2)',
+    tint: 'rgba(125,170,146,0.2)',
   },
   {
     key: 'carbs' as const,
     label: 'Carb',
     color: 'var(--color-carbs)',
-    tint: 'rgba(255,212,59,0.2)',
+    tint: 'rgba(232,196,104,0.2)',
   },
-  { key: 'fat' as const, label: 'Fat', color: 'var(--color-fat)', tint: 'rgba(244,162,97,0.2)' },
+  {
+    key: 'fat' as const,
+    label: 'Fat',
+    color: 'var(--color-fat)',
+    tint: 'rgba(212,137,106,0.2)',
+  },
   {
     key: 'sugar' as const,
     label: 'Sug',
     color: 'var(--color-sugar)',
-    tint: 'rgba(255,107,107,0.2)',
+    tint: 'rgba(207,102,121,0.2)',
   },
 ]
 
@@ -58,7 +63,9 @@ function MealCard({
   const debouncedValues = useDebounce(localValues, 800)
   const hasMounted = useRef(false)
   const onUpdateRef = useRef(onUpdate)
-  onUpdateRef.current = onUpdate
+  useEffect(() => {
+    onUpdateRef.current = onUpdate
+  }, [onUpdate])
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -89,8 +96,8 @@ function MealCard({
         <button
           onClick={() => onDelete(meal.meal_id)}
           style={{
-            background: 'rgba(255,107,107,0.1)',
-            border: '1px solid rgba(255,107,107,0.25)',
+            background: 'rgba(207,102,121,0.1)',
+            border: '1px solid rgba(207,102,121,0.25)',
             color: 'var(--color-danger)',
             cursor: 'pointer',
             fontSize: '1em',
@@ -124,6 +131,7 @@ function MealCard({
                 fontSize: '16px',
                 textAlign: 'center',
                 borderColor: tint,
+                fontFamily: 'var(--font-mono)',
               }}
               value={localValues[key]}
               onChange={(e) => {

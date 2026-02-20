@@ -35,7 +35,7 @@ frontend/
     components/
       Header.tsx                     — Nav bar: brand + NavLinks (Daily/Weekly/Account) + UserSelector
       UserSelector.tsx               — User dropdown (driven by UserContext)
-      CalorieRingChart.tsx           — Custom SVG radial chart (calorie ring + 4 macro rings)
+      CalorieRingChart.tsx           — Calorie ring (SVG with glow) + horizontal macro progress bars (side-by-side layout)
       DailySummaryCard.tsx           — Wraps CalorieRingChart with totals + goals
       MealList.tsx                   — Cards-only meal list with inline-editable macro inputs
       MealEntryForm.tsx              — Text input + hidden file input with camera button + submit + meal memory autocomplete dropdown
@@ -46,7 +46,7 @@ frontend/
       DailyPage.tsx                  — Date nav > ring chart > meal form > meal cards
       WeeklyPage.tsx                 — Weekly overview with charts
       AccountPage.tsx                — Create user + goal setting
-  index.html                         — Google Fonts (Inter), theme-color meta
+  index.html                         — Google Fonts (DM Sans + JetBrains Mono), theme-color meta
   vite.config.ts
   package.json
   tsconfig*.json
@@ -58,26 +58,29 @@ frontend/
 
 | Token | Value | Purpose |
 |-------|-------|---------|
-| `--color-bg` | `#1a1a1a` | Page background |
-| `--color-surface` | `#242424` | Cards/surfaces |
-| `--color-surface-alt` | `#2c2c2c` | Inputs, hover states |
-| `--color-border` | `#333` | Borders |
-| `--color-text` | `#f0f0f0` | Primary text |
-| `--color-text-secondary` | `#888` | Labels, secondary text |
-| `--color-calories` | `#7c83ff` | Calories accent (blue-violet) |
-| `--color-protein` | `#4ecdc4` | Protein (teal) |
-| `--color-carbs` | `#ffd43b` | Carbs (warm yellow) |
-| `--color-fat` | `#f4a261` | Fat (orange) |
-| `--color-sugar` | `#ff6b6b` | Sugar (red) |
-| `--color-danger` | `#ff6b6b` | Delete/destructive actions |
+| `--color-bg` | `#141210` | Page background (warm very dark brown) |
+| `--color-surface` | `#1c1a17` | Cards/surfaces (warm) |
+| `--color-surface-alt` | `#242119` | Inputs, hover states (warm) |
+| `--color-border` | `#2a2722` | Borders (warm) |
+| `--color-text` | `#f0ebe4` | Primary text (warm off-white) |
+| `--color-text-secondary` | `#7a7268` | Labels, secondary text (warm gray) |
+| `--color-calories` | `#c4885a` | Calories accent (amber/copper) |
+| `--color-protein` | `#7daa92` | Protein (warm sage green) |
+| `--color-carbs` | `#e8c468` | Carbs (warm gold) |
+| `--color-fat` | `#d4896a` | Fat (terra cotta) |
+| `--color-sugar` | `#cf6679` | Sugar (warm rose) |
+| `--color-danger` | `#cf6679` | Delete/destructive actions (warm rose) |
+| `--font-body` | `'DM Sans', system-ui, sans-serif` | Body text font |
+| `--font-mono` | `'JetBrains Mono', 'SF Mono', monospace` | Numerical data font |
 
-### Font
+### Fonts
 
-Inter (400, 600, 700) loaded via Google Fonts in `index.html`.
+- **DM Sans** (400, 500, 600, 700) — body text, loaded via Google Fonts in `index.html`
+- **JetBrains Mono** (400, 500, 600) — numerical data displays, loaded via Google Fonts in `index.html`
 
 ### Reusable CSS Classes (defined in `App.css`)
 
-- `.card` — Standard card container (surface bg, border, 12px radius)
+- `.card` — Standard card container (surface bg, border, 16px radius)
 - `.primary` — Accent-colored button (on `<button>`)
 - `.date-nav` — Centered flex row for date navigation arrows
 - `.meal-cards` — Vertical flex column for meal card list
@@ -120,6 +123,7 @@ Uses react-router-dom with 3 routes:
 - `useUser()` hook provides `{ users, selectedUser, selectUser, refreshUsers }` — use it in any component that needs the current user
 - Selected user ID is persisted to localStorage under key `brotein_user_id`
 - All API calls go through `api.ts` — never call `fetch()` directly in components
+- Use `var(--font-mono)` for numerical data displays (calorie counts, macro values, chart labels)
 
 ## Current Status
 

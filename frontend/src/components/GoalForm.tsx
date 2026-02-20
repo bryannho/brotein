@@ -7,11 +7,11 @@ interface Props {
 }
 
 const fields = [
-  { key: 'calories_goal' as const, label: 'Calories Goal' },
-  { key: 'protein_goal' as const, label: 'Protein Goal (g)' },
-  { key: 'carbs_goal' as const, label: 'Carbs Goal (g)' },
-  { key: 'fat_goal' as const, label: 'Fat Goal (g)' },
-  { key: 'sugar_goal' as const, label: 'Sugar Goal (g)' },
+  { key: 'calories_goal' as const, label: 'Calories', color: 'var(--color-calories)' },
+  { key: 'protein_goal' as const, label: 'Protein (g)', color: 'var(--color-protein)' },
+  { key: 'carbs_goal' as const, label: 'Carbs (g)', color: 'var(--color-carbs)' },
+  { key: 'fat_goal' as const, label: 'Fat (g)', color: 'var(--color-fat)' },
+  { key: 'sugar_goal' as const, label: 'Sugar (g)', color: 'var(--color-sugar)' },
 ]
 
 export default function GoalForm({ goals, onSave }: Props) {
@@ -42,7 +42,7 @@ export default function GoalForm({ goals, onSave }: Props) {
 
   return (
     <div>
-      {fields.map(({ key, label }) => (
+      {fields.map(({ key, label, color }) => (
         <div
           key={key}
           style={{
@@ -57,6 +57,7 @@ export default function GoalForm({ goals, onSave }: Props) {
             type="text"
             inputMode="decimal"
             className="goal-input"
+            style={{ borderColor: color }}
             value={values[key]}
             onChange={(e) => handleChange(key, e.target.value)}
           />

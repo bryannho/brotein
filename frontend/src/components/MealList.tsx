@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Meal } from '../types'
 import { updateMeal, deleteMeal } from '../api'
+import { useDebounce } from '../hooks/useDebounce'
 
 const MACRO_FIELDS = [
   {
@@ -54,16 +55,25 @@ function MealCard({
     sugar: String(meal.sugar),
   })
 
-  const handleBlur = () => {
-    const macros: MacroValues = {
-      calories: Number(localValues.calories) || 0,
-      protein: Number(localValues.protein) || 0,
-      carbs: Number(localValues.carbs) || 0,
-      fat: Number(localValues.fat) || 0,
-      sugar: Number(localValues.sugar) || 0,
+  const debouncedValues = useDebounce(localValues, 800)
+  const hasMounted = useRef(false)
+  const onUpdateRef = useRef(onUpdate)
+  onUpdateRef.current = onUpdate
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return
     }
-    onUpdate(meal.meal_id, macros)
-  }
+    const macros: MacroValues = {
+      calories: Number(debouncedValues.calories) || 0,
+      protein: Number(debouncedValues.protein) || 0,
+      carbs: Number(debouncedValues.carbs) || 0,
+      fat: Number(debouncedValues.fat) || 0,
+      sugar: Number(debouncedValues.sugar) || 0,
+    }
+    onUpdateRef.current(meal.meal_id, macros)
+  }, [debouncedValues, meal.meal_id])
 
   return (
     <div className="card">
@@ -93,7 +103,7 @@ function MealCard({
           &times;
         </button>
       </div>
-      <div style={{ display: 'flex', gap: '0.4rem' }}>
+      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'flex-end' }}>
         {MACRO_FIELDS.map(({ key, label, color, tint }) => (
           <div
             key={key}
@@ -110,8 +120,8 @@ function MealCard({
               inputMode="decimal"
               style={{
                 width: '100%',
-                padding: '0.25em 0.2em',
-                fontSize: '0.85em',
+                padding: '0.2em',
+                fontSize: '16px',
                 textAlign: 'center',
                 borderColor: tint,
               }}
@@ -122,7 +132,6 @@ function MealCard({
                   setLocalValues((prev) => ({ ...prev, [key]: v }))
                 }
               }}
-              onBlur={handleBlur}
             />
           </div>
         ))}
